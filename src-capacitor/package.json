@@ -1,0 +1,11 @@
+{
+  "name": "math",
+  "version": "0.0.1",
+  "description": "A Quasar Project",
+  "private": true,
+  "dependencies": {
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}

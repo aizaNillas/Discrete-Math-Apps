@@ -1,0 +1,7 @@
+{
+  "appId": "com.disapps.math",
+  "appName": "Discrete Math App",
+  "webDir": "dist/spa",
+  "bundledWebRuntime": false
+}
+
