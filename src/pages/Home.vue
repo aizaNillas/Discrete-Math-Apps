@@ -51,7 +51,7 @@ export default defineComponent({
 <style scoped>
 /* ✅ Background Gradient + Image */
 .custom-page {
-  background: url("/src/assets/images/bc03.webp") no-repeat center center fixed;
+  background: url('/images/bc03.webp') no-repeat center center fixed;
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;

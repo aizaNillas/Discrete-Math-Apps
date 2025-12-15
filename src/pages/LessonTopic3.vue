@@ -367,7 +367,7 @@
             <div v-if="topic.type === 'venn'">
 
               <img 
-                src="/src/assets/images/venndiagram.png"  
+                src="/images/venndiagram.png"  
                 alt="Venn Diagram Example" 
                 class="lesson-image"
               />
@@ -396,7 +396,7 @@
                   <p>{{ vennFeedback }}</p>
                   <img 
                     v-if="vennFeedback === '✅ Correct! The number of students who like at least one of the drinks is 180.'" 
-                    src="/src/assets/images/excercise.png" 
+                     src="/images/excercise.png"
                     alt="Venn Diagram Solution" 
                     class="lesson-image"
                   />
@@ -416,11 +416,11 @@
         </div>
 
         <!-- IMAGE HERE -->
-        <img 
-          src="/src/assets/images/setunion.png"  
-          alt="Union of Sets Diagram" 
-          class="lesson-image"
-        />
+       <img 
+    src="/images/setunion.png"  
+    alt="Union of Sets Diagram" 
+    class="lesson-image"
+      />
 
         <!-- 🔙 Back button -->
         <button @click="unionPageActive = false; selectedTopic = null;" class="next-button">⬅️ Back to Lesson</button>
@@ -435,7 +435,7 @@
 
         <!-- IMAGE HERE -->
         <img 
-          src="/src/assets/images/intersection.png"  
+          src="/images/intersection.png"  
           alt="Intersection of Sets Diagram" 
           class="lesson-image"
         />
@@ -453,7 +453,7 @@
 
         <!-- IMAGE HERE -->
         <img 
-          src="/src/assets/images/difference.jpg"  
+          src="/images/difference.jpg"  
           alt="Set Difference of Sets Diagram" 
           class="lesson-image"
         />
@@ -471,7 +471,7 @@
 
         <!-- IMAGE HERE -->
         <img 
-          src="/src/assets/images/complement.png"  
+          src="/images/complement.png"  
           alt="Set Complement Diagram" 
           class="lesson-image"
         />
@@ -489,7 +489,7 @@
 
         <!-- IMAGE HERE -->
         <img 
-          src="/src/assets/images/cartesian product.png"  
+          src="/images/cartesian product.png"  
           alt="Cartesian Product Diagram" 
           class="lesson-image"
         />
@@ -507,7 +507,7 @@
 
         <!-- IMAGE HERE -->
         <img 
-          src="/src/assets/images/excercise.png"  
+          src="/images/excercise.png"  
           alt="Venn Diagram Representation" 
           class="lesson-image"
         />

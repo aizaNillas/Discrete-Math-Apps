@@ -108,7 +108,7 @@ export default defineComponent({
 /* Background */
 .bg-gradient {
   background: linear-gradient(135deg, #1565c0, #1e88e5);
-  background: url('/src/assets/images/aalesson.jpg') no-repeat center center fixed;
+  background: url('/images/aalesson.jpg') no-repeat center center fixed;
   background-size: cover;
   background-position: center center;
   background-attachment: fixed;

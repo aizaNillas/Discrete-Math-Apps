@@ -51,7 +51,7 @@
             <!-- SET TOPIC SPECIAL CONTENT -->
             <div v-if="topics[selectedTopic].type === 'subset'">
               <img
-                src="/src/assets/images/functionrelation.png"
+                src="/images/functionrelation.png"
                 alt="Function"
                 class="lesson-image"
               />
@@ -66,7 +66,7 @@
               <div class="problem-box">
                 <h4> Mastery Quiz 1</h4>
                 <img
-                  src="/src/assets/images/domainrange.png"
+                  src="/images/domainrange.png"
                   alt="Vowels Example"
                   class="lesson-image"
                 />
@@ -85,7 +85,7 @@
               <div class="problem-box">
                 <h4> Mastery Quiz 2</h4>
                 <img
-                  src="/src/assets/images/rd.png"
+                  src="/images/rd.png"
                   alt="Set of Even Numbers"
                   class="lesson-image"
                 />
@@ -166,7 +166,7 @@
             <!-- Function Special Content -->
             <div v-if="topics[selectedTopic].type === 'function'">
               <img
-                src="/src/assets/images/function3.jpg"
+                src="/images/function3.jpg"
                 alt="Function"
                 class="lesson-image"
               />
@@ -175,7 +175,7 @@
                 <div class="definition-box" style="display: flex; flex-direction: row;">
                   <div style="margin-right: 20px;">
                     <img
-                      src="/src/assets/images/codomain.png"
+                      src="/images/codomain.png"
                       alt="Key Terms"
                       class="lesson-image"
                     />
@@ -464,7 +464,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
             </p>
           </div>
           <img
-            src="/src/assets/images/binarysp.png"
+            src="/images/binarysp.png"
             alt="Relation on One Set"
             class="lesson-image"
           />
@@ -660,7 +660,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
           </p>
         </div>
         <img
-          src="/src/assets/images/pricewise.png"
+          src="/images/pricewise.png"
           alt="Piecewise Function"
           class="lesson-image"
         />

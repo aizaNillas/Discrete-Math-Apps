@@ -92,7 +92,7 @@
               <div class="guide-box">
                 5. Effectiveness: The steps should be basic enough to be carried out, in principle, by a human or computer.
               </div>
-              <img src="/src/assets/images/algo.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+              <img src="/images/algo.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
             </div>
             <button v-if="index === 0" @click="showImplication = true; scrollToTop()" class="next-button">➡️ Next</button>
             <div v-if="index === 1" class="problem-box">
@@ -161,7 +161,7 @@
                   <li>Output: The final result produced after the algorithm has been applied to the input.</li>
                 </ol>
               </div>
-              <img src="/src/assets/images/inputp.webp" alt="What makes an algorithm" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+              <img src="/images/inputp.webp" alt="What makes an algorithm" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
               <div class="guide-box">
                 <h5>Characteristics of a Good Algorithm:</h5>
                 <ul>
@@ -399,51 +399,51 @@ f_costs[neighbor] = g_costs[neighbor] + heuristic(neighbor, goal)
           <div class="guide-box">
             <strong>1. Sorting Algorithms:</strong> These algorithms arrange a collection of items in a specific order (e.g., ascending or descending).<br>
             Example: Bubble Sort, Quick Sort, Merge Sort.
-            <img src="/src/assets/images/bubblesort.webp" alt="Bubble Sort" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
-            <img src="/src/assets/images/Quicksort.png" alt="Quick Sort" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
-            <img src="/src/assets/images/merge.png" alt="Merge Sort" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/bubblesort.webp" alt="Bubble Sort" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/Quicksort.png" alt="Quick Sort" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/merge.png" alt="Merge Sort" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           
           </div>
           <div class="guide-box">
             <strong>2. Search Algorithms:</strong> These are designed to find specific items in a collection of data.<br>
             Example: Linear Search, Binary Search.
-            <img src="/src/assets/images/Linears.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
-            <img src="/src/assets/images/binnarys.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/Linears.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/binnarys.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           </div>
           <div class="guide-box">
             <strong>3. Graph Algorithms:</strong> These algorithms work with graphs, which consist of nodes (vertices) connected by edges. They are used to solve problems related to networks, such as finding the shortest path between two nodes.<br>
             Example: Dijkstra's Algorithm, A* Algorithm, Depth-First Search (DFS), Breadth-First Search (BFS).
-            <img src="/src/assets/images/dij.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;"><br>
+            <img src="/images/dij.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;"><br>
             <strong>Depth-First Search (DFS), Breadth-First Search (BFS).</strong>
-            <img src="/src/assets/images/bfsdfss.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/bfsdfss.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           
           </div>
           <div class="guide-box">
             <strong>4. Dynamic Programming Algorithms:</strong> These break down complex problems into smaller overlapping subproblems, solving each subproblem once and storing the solution for reuse.<br>
             Example: Fibonacci Sequence, Longest Common Subsequence (LCS).
-            <img src="/src/assets/images/fibu.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/fibu.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           
           </div>
           <div class="guide-box">
             <strong>5. Greedy Algorithms:</strong> These make the best possible choice at each step, hoping that these local solutions will lead to a global optimum.<br>
             Example: Dijkstra's Algorithm (for shortest paths), Knapsack Problem.
-            <img src="/src/assets/images/dij.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
-            <img src="/src/assets/images/Knapsack.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/dij.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/Knapsack.jpg" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           </div>
           <div class="guide-box">
             <strong>6. Divide and Conquer Algorithms:</strong> These solve problems by breaking them into smaller subproblems, solving each subproblem, and then combining the results.<br>
             Example: Merge Sort, Quick Sort.<br>
              <strong>Merge Sort</strong>
-            <img src="/src/assets/images/mergesort.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/mergesort.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
             <strong>Quick Sort</strong>
-            <img src="/src/assets/images/Quickkkk.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/Quickkkk.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           </div>
           <div class="guide-box">
             <strong>7. Backtracking Algorithms:</strong> These explore all possible solutions to a problem by building a solution incrementally and abandoning the path when it is determined to be unfeasible.<br>
             Example: N-Queens Problem, Sudoku Solver.
-            <img src="/src/assets/images/nqueen.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;"><br>
+            <img src="/images/nqueen.png" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;"><br>
             <strong> Sudoku Solver</strong>
-            <img src="/src/assets/images/Suduko.webp" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
+            <img src="/images/Suduko.webp" alt="Algorithm Diagram" style="display: block; margin: 10px auto; max-width: 100%; border-radius: 8px;">
           </div>
         </div>
         <div style="display: flex; justify-content: center; align-items: center;">
@@ -557,27 +557,27 @@ export default {
       demoFoundIndex: -1,
       lawQuizzes: [
         {
-          image: "/src/assets/images/bubblesortquiz.jpg",
+          image: "/images/bubblesortquiz.jpg",
           answer: "Bubble Sort",
           explanation: "Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order."
         },
         {
-          image: "/src/assets/images/Quicksortquiz.png",
+          image: "/images/Quicksortquiz.png",
           answer: "Quick Sort",
           explanation: "Quick Sort is a divide-and-conquer algorithm that selects a pivot and partitions the array around it."
         },
         {
-          image: "/src/assets/images/Linearquiz.jpg",
+          image: "/images/Linearquiz.jpg",
           answer: "Linear Search",
           explanation: "Linear Search sequentially checks each element of the list until a match is found."
         },
         {
-          image: "/src/assets/images/binnaryquiz.jpg",
+          image: "/images/binnaryquiz.jpg",
           answer: "Binary Search",
           explanation: "Binary Search works on sorted arrays by repeatedly dividing the search interval in half."
         },
         {
-          image: "/src/assets/images/mergesortquiz.png",
+          image: "/images/mergesortquiz.png",
           answer: "Merge Sort",
           explanation: "Merge Sort is a divide-and-conquer algorithm that divides the input array into two halves, recursively sorts them, and then merges the two sorted halves."
         }
