@@ -1,9 +1,8 @@
-```vue
 <template>
   <div class="lesson-container">
-    <!-- Pre-Test Section -->
-    <div v-if="!preTestCompleted" class="pretest-container">
-      <h3 class="title">📝 Pre-Test: TYPES OF SETS</h3>
+    <!-- Pre-Test Section - Only show if not completed in this session -->
+    <div v-if="!preTestCompleted && !hasTakenPreTestInSession" class="pretest-container">
+      <h3 class="title">📝 Pre-Test: SET THEORY</h3>
       <div v-for="(question, index) in preTestQuestions" :key="index" class="pretest-box">
         <p><strong>{{ index + 1 }}. {{ question.question }}</strong></p>
         <div v-for="(option, optIndex) in question.options" :key="optIndex" class="option-box">
@@ -15,29 +14,1019 @@
         </div>
       </div>
       <button @click="submitPreTest" class="submit-button" :disabled="!preTestAllAnswered">✅ Submit Pre-Test</button>
-      <div v-if="showPreTestResult" class="modal-backdrop" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; display: flex; justify-content: center; align-items: center;">
+      <div v-if="showPreTestResult" class="modal-backdrop" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999; display: flex; justify-content: center; align-items: center;">
         <div class="result-box" style="background: white; padding: 20px; border-radius: 8px; max-width: 400px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
           <h4>Your Score: {{ score }}/{{ preTestQuestions.length }}</h4>
           <p v-if="score === preTestQuestions.length">🎉 Excellent! You mastered this topic.</p>
           <p v-else-if="score >= Math.ceil(preTestQuestions.length/2)">👍 Good job! Let's review some concepts.</p>
-          <p v-else>💡 Don’t worry! The lesson will help you understand better.</p>
-          <button @click="preTestCompleted = true; showPreTestResult = false" class="next-button">➡️ Continue to Lesson</button>
+          <p v-else>💡 Don't worry! The lesson will help you understand better.</p>
+          <button @click="completePreTest" class="next-button">➡️ Continue to Lesson</button>
         </div>
       </div>
     </div>
-    <!-- Lesson AFTER Pre-Test -->
+    
+    <!-- Lesson Content - Show if pre-test completed OR already taken in this session -->
     <div v-else>
-      <h5 class="title">📚 TYPES OF SETS </h5>
-      <!-- Normal Lesson View - All Topics Visible Only If None Selected -->
-      <div v-if="selectedTopic === null && !subsetPageActive && !unionPageActive && !singletonPageActive && !singletonRepresentationPageActive && !infinitePageActive && !infiniteRepresentationPageActive && !universalPageActive && !powerSetPageActive">
-        <div v-for="(topic, index) in topics" :key="index" class="content-box">
-          <h5 @click="toggleTopic(index)" class="clickable-title">
-            {{ topic.title }} {{ selectedTopic === index ? "" : "" }}
-          </h5>
-          <div v-if="selectedTopic === index">
-            <p v-html="formatContent(topic.content)"></p>
+      <div v-if="!hasTakenPreTestInSession && !preTestCompleted" style="text-align: center; padding: 20px;">
+        <h4>Welcome Back!</h4>
+        <p>You've already completed the pre-test in this session. Proceeding to lesson content...</p>
+        <button @click="proceedToLesson" class="next-button" style="margin-top: 20px;">
+          ➡️ Continue to Lesson
+        </button>
+      </div>
+      <div v-else>
+        <h5 class="title">📚 TYPES OF SETS </h5>
+        <!-- Normal Lesson View - All Topics Visible Only If None Selected -->
+        <div v-if="selectedTopic === null && !subsetPageActive && !unionPageActive && !singletonPageActive && !singletonRepresentationPageActive && !infinitePageActive && !infiniteRepresentationPageActive && !universalPageActive && !powerSetPageActive">
+          <div v-for="(topic, index) in topics" :key="index" class="content-box">
+            <h5 @click="toggleTopic(index)" class="clickable-title">
+              {{ topic.title }} {{ selectedTopic === index ? "" : "" }}
+            </h5>
+            <div v-if="selectedTopic === index">
+              <p v-html="formatContent(topic.content)"></p>
+              <!-- INTRO SPECIAL CONTENT -->
+              <div v-if="topic.type === 'intro'">
+                <div style="background-color: #ecdfaa; padding: 10px; border-radius: 5px; margin-bottom: 10px;border: 1px solid #efd56d;">
+                  <!-- NEW: Quiz Card for Set Symbols - FORMATTED LIKE THE IMAGE -->
+                  <div class="problem-box" style="margin-bottom: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">
+                    <h5 style="text-align: center; color: #333; margin-bottom: 15px;"><strong>Set Symbols Quiz</strong> </h5>
+                    <div style="margin-bottom: 15px; padding: 10px; background-color: #e9f7fe; border-radius: 5px; border-left: 4px solid #2196F3;">
+                      <p style="font-weight: bold; color: ##4CAF50;margin: 0;">
+                        Complete all 5 questions to unlock the Set Symbols table:
+                      </p>
+                    </div>
+                    
+                    <!-- Quiz Question 1 - EXACTLY LIKE THE IMAGE -->
+                    <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                      <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                        1. which of these is the symbol of set ?
+                      </p>
+                      <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz1" 
+                            value="U" 
+                            v-model="setSymbolsAnswers[0]"
+                            :disabled="setSymbolsQuiz[0].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>A. U</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz1" 
+                            value="A ∪ B" 
+                            v-model="setSymbolsAnswers[0]"
+                            :disabled="setSymbolsQuiz[0].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>B. A ∪ B</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz1" 
+                            value="{ }" 
+                            v-model="setSymbolsAnswers[0]"
+                            :disabled="setSymbolsQuiz[0].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>C. { }</span>
+                        </label>
+                      </div>
+                      
+                      <!-- Submit Button and Feedback for Question 1 -->
+                      <div v-if="setSymbolsAnswers[0] && !setSymbolsQuiz[0].answered" style="margin-top: 10px;">
+                        <button @click="checkSetSymbolsAnswer(0)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                          Submit Answer
+                        </button>
+                      </div>
+                      <div v-if="setSymbolsQuiz[0].answered" style="margin-top: 10px; font-weight: bold;">
+                        <span v-if="setSymbolsQuiz[0].correct" style="color: green;">✅ Correct!</span>
+                        <span v-else style="color: red;">❌ Incorrect. Correct answer: { }</span>
+                      </div>
+                    </div>
+
+                    <!-- Quiz Question 2 -->
+                    <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                      <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                        2. Which symbol represents the universal set?
+                      </p>
+                      <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz2" 
+                            value="∅" 
+                            v-model="setSymbolsAnswers[1]"
+                            :disabled="setSymbolsQuiz[1].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>A. ∅</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz2" 
+                            value="U" 
+                            v-model="setSymbolsAnswers[1]"
+                            :disabled="setSymbolsQuiz[1].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>B. U</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz2" 
+                            value="∈" 
+                            v-model="setSymbolsAnswers[1]"
+                            :disabled="setSymbolsQuiz[1].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>C. ∈</span>
+                        </label>
+                      </div>
+                      
+                      <div v-if="setSymbolsAnswers[1] && !setSymbolsQuiz[1].answered" style="margin-top: 10px;">
+                        <button @click="checkSetSymbolsAnswer(1)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                          Submit Answer
+                        </button>
+                      </div>
+                      <div v-if="setSymbolsQuiz[1].answered" style="margin-top: 10px; font-weight: bold;">
+                        <span v-if="setSymbolsQuiz[1].correct" style="color: green;">✅ Correct!</span>
+                        <span v-else style="color: red;">❌ Incorrect. Correct answer: U</span>
+                      </div>
+                    </div>
+
+                    <!-- Quiz Question 3 - UPDATED -->
+                    <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                      <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                        3. What is the symbol of Null or empty set?
+                      </p>
+                      <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz3" 
+                            value="U" 
+                            v-model="setSymbolsAnswers[2]"
+                            :disabled="setSymbolsQuiz[2].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>A. U</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz3" 
+                            value="∅" 
+                            v-model="setSymbolsAnswers[2]"
+                            :disabled="setSymbolsQuiz[2].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>B. ∅</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz3" 
+                            value="∈" 
+                            v-model="setSymbolsAnswers[2]"
+                            :disabled="setSymbolsQuiz[2].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>C. ∈</span>
+                        </label>
+                      </div>
+                      
+                      <div v-if="setSymbolsAnswers[2] && !setSymbolsQuiz[2].answered" style="margin-top: 10px;">
+                        <button @click="checkSetSymbolsAnswer(2)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                          Submit Answer
+                        </button>
+                      </div>
+                      <div v-if="setSymbolsQuiz[2].answered" style="margin-top: 10px; font-weight: bold;">
+                        <span v-if="setSymbolsQuiz[2].correct" style="color: green;">✅ Correct!</span>
+                        <span v-else style="color: red;">❌ Incorrect. Correct answer: ∅</span>
+                      </div>
+                    </div>
+
+                    <!-- Quiz Question 4 - UPDATED -->
+                    <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                      <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                        4. What is the symbol of Set A intersection set B?
+                      </p>
+                      <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz4" 
+                            value="A ∪ B" 
+                            v-model="setSymbolsAnswers[3]"
+                            :disabled="setSymbolsQuiz[3].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>A. A ∪ B</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz4" 
+                            value="A ∩ B" 
+                            v-model="setSymbolsAnswers[3]"
+                            :disabled="setSymbolsQuiz[3].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>B. A ∩ B</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz4" 
+                            value="A ⊆ B" 
+                            v-model="setSymbolsAnswers[3]"
+                            :disabled="setSymbolsQuiz[3].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>C. A ⊆ B</span>
+                        </label>
+                      </div>
+                      
+                      <div v-if="setSymbolsAnswers[3] && !setSymbolsQuiz[3].answered" style="margin-top: 10px;">
+                        <button @click="checkSetSymbolsAnswer(3)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                          Submit Answer
+                        </button>
+                      </div>
+                      <div v-if="setSymbolsQuiz[3].answered" style="margin-top: 10px; font-weight: bold;">
+                        <span v-if="setSymbolsQuiz[3].correct" style="color: green;">✅ Correct!</span>
+                        <span v-else style="color: red;">❌ Incorrect. Correct answer: A ∩ B</span>
+                      </div>
+                    </div>
+
+                    <!-- Quiz Question 5 - UPDATED -->
+                    <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #e0e0e0;">
+                      <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                        5. What is the symbol of Set A is a subset of set B?
+                      </p>
+                      <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz5" 
+                            value="A ∪ B" 
+                            v-model="setSymbolsAnswers[4]"
+                            :disabled="setSymbolsQuiz[4].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>A. A ∪ B</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz5" 
+                            value="A ∩ B" 
+                            v-model="setSymbolsAnswers[4]"
+                            :disabled="setSymbolsQuiz[4].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>B. A ∩ B</span>
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                          <input 
+                            type="radio" 
+                            name="setQuiz5" 
+                            value="A ⊆ B" 
+                            v-model="setSymbolsAnswers[4]"
+                            :disabled="setSymbolsQuiz[4].answered"
+                            style="margin-right: 8px;"
+                          />
+                          <span>C. A ⊆ B</span>
+                        </label>
+                      </div>
+                      
+                      <div v-if="setSymbolsAnswers[4] && !setSymbolsQuiz[4].answered" style="margin-top: 10px;">
+                        <button @click="checkSetSymbolsAnswer(4)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                          Submit Answer
+                        </button>
+                      </div>
+                      <div v-if="setSymbolsQuiz[4].answered" style="margin-top: 10px; font-weight: bold;">
+                        <span v-if="setSymbolsQuiz[4].correct" style="color: green;">✅ Correct!</span>
+                        <span v-else style="color: red;">❌ Incorrect. Correct answer: A ⊆ B</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Quiz Progress with SCORE - UPDATED -->
+                    <div style="margin-top: 15px; padding: 10px; background-color: #e8f4fd; border-radius: 5px; border: 1px solid #bbdefb;">
+                      <p style="font-weight: bold; color: #4CAF50; margin-bottom: 5px;">
+                        Progress: {{ completedSetSymbolsQuizCount }}/5 questions completed
+                      </p>
+                      <p style="font-weight: bold; color: #4CAF50; margin-bottom: 5px;">
+                        Your Score: {{ setSymbolsScore }}/5
+                      </p>
+                      <div v-if="completedSetSymbolsQuizCount === 5" style="color: #2e7d32; font-weight: bold; padding: 8px; background-color: #e8f5e9; border-radius: 4px; border: 1px solid #c8e6c9;">
+                        🎉 Quiz completed! You can now view the Set Symbols table.
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Toggle button for Set Symbols -->
+                  <div style="text-align: center; margin-bottom: 15px;">
+                    <button 
+                      @click="toggleSetSymbols" 
+                      class="solve-button" 
+                      style="margin-bottom: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; background-color: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;"
+                      :disabled="completedSetSymbolsQuizCount < 5"
+                      :style="{ 
+                        backgroundColor: completedSetSymbolsQuizCount < 5 ? '#ccc' : '#4CAF50;',
+                        cursor: completedSetSymbolsQuizCount < 5 ? 'not-allowed' : 'pointer'
+                      }"
+                    >
+                      {{ showSetSymbols ? "🔽 HIDE SET SYMBOLS" : "📘 SHOW SET SYMBOLS" }}
+                    </button>
+                  </div>
+                  
+                  <!-- Error message if quiz not completed -->
+                  <div v-if="showSetSymbolsError" style="color: #d32f2f; background-color: #ffebee; padding: 12px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ef9a9a; text-align: center; font-weight: bold;">
+                    ⚠️ Complete all 5 quiz questions to unlock the Set Symbols table!
+                  </div>
+
+                  <!-- Set Symbols Table (Toggleable) -->
+                  <div v-if="showSetSymbols && completedSetSymbolsQuizCount === 5" style="margin-top: 15px;">
+                    <h4 style="text-align: center; color: #333; margin-bottom: 15px;">Set Symbols</h4>
+                    <table style="width: 100%; border-collapse: collapse; border: 2px solid #efd56d; border-radius: 8px; overflow: hidden;">
+                      <thead>
+                        <tr style="background-color: #eeede9;">
+                          <th style="border: 1px solid #efd56d; padding: 12px; text-align: center; font-weight: bold; color: #333;">Symbols</th>
+                          <th style="border: 1px solid #efd56d; padding: 12px; text-align: center; font-weight: bold; color: #333;">Meaning</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="background-color: white;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">{ }</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Symbol of set</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">U</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Universal set</td>
+                        </tr>
+                        <tr style="background-color: white;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">n(X)</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Cardinal number of set X</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">b ∈ A</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">'b' is an element of set A</td>
+                        </tr>
+                        <tr style="background-color: white;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">a ∉ B</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">'a' is not an element of set B</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">∅</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Null or empty set</td>
+                        </tr>
+                        <tr style="background-color: white;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">A ∪ B</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Set A union set B</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">A ∩ B</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Set A intersection set B</td>
+                        </tr>
+                        <tr style="background-color: white;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">A ⊆ B</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Set A is a subset of set B</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                          <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">B ⊇ A</td>
+                          <td style="border: 1px solid #efd56d; padding: 10px;">Set B is the superset of set A</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  <!-- Next Lesson Button -->
+                  <div style="text-align: center; margin-top: 20px;">
+                    <button @click="goToNextLesson" class="next-button" style="padding: 12px 24px; font-size: 16px; font-weight: bold; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                      ➡️ Next Lesson
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- SETS, CARDINALITY, REPRESENTATION OF SETS SPECIAL CONTENT -->
+              <div v-if="topic.type === 'sets'">
+                <!-- LET'S TRY Card (Sets) -->
+                <div class="problem-box">
+                  <h4> Mastery Quiz 1</h4>
+                  <p><strong>Provide a set of vowels in the English alphabet?</strong></p>
+                  <input
+                    v-model="subsetAnswer"
+                    placeholder="Type your answer here"
+                    class="answer-input"
+                  />
+                  <button @click="checkSubsetAnswer" class="submit-button" :disabled="!subsetAnswer.trim()"> LET'S CHECK </button>
+                  <div v-if="subsetFeedback" class="result-box">
+                    <p>{{ subsetFeedback }}</p>
+                  </div>
+                  <div v-if="subsetGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+                </div>
+                <!-- TRY THIS Card (Representation of Sets) -->
+                <div class="problem-box">
+                  <h4> Mastery Quiz 2</h4>
+                  <p><strong>Which of the following represent the set of even numbers?</strong></p>
+                  <div v-for="(option, idx) in subsetQuiz.options" :key="idx" class="option-box">
+                    <label class="option-label">
+                      <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
+                      <input type="radio" name="subsetQuiz" :value="option" v-model="subsetQuizAnswer" />
+                      <span class="option-text">{{ option }}</span>
+                    </label>
+                  </div>
+                  <!-- CHANGED: Larger buttons for Sets Mastery Quiz 2 -->
+                  <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
+                    <button @click="checkSubsetQuiz" class="submit-button larger-button" :disabled="!subsetQuizAnswer">LET'S CHECK</button>
+                    <button @click="subsetPageActive = true" class="next-button larger-button">➡️ Next</button>
+                  </div>
+                  <div v-if="subsetQuizFeedback" class="result-box">
+                    <p>{{ subsetQuizFeedback }}</p>
+                  </div>
+                  <div v-if="subsetQuizGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+                </div>
+              </div>
+              <!-- SINGLETON SET, EMPTY SET, FINITE SET SPECIAL CONTENT -->
+              <div v-else-if="topic.type === 'singleton'">
+                <!-- Step-by-step card ABOVE Try This -->
+                <div v-if="showSingletonGuide" class="guide-box">
+                  <h4>📘 YOUR GUIDE</h4>
+                  <p v-for="(step, sIdx) in singletonSteps" :key="sIdx">
+                    <button @click="toggleSingletonStep(sIdx)" class="step-button">
+                      Step {{ sIdx + 1 }}
+                    </button>
+                    <span v-if="singletonRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
+                  </p>
+                </div>
+                <!-- LET'S TRY Card (Singleton Set) - UPDATED FORMAT -->
+                <div class="problem-box">
+                  <h4>Mastery quiz 1</h4>
+                  <p><strong>Give a singleton set containing the number 3.</strong></p>
+                  <!-- UPDATED: Format similar to the image - LEFT ALIGNED -->
+                  <div style="margin: 10px 0;">
+                    <button 
+                      @click="showSingletonGuide = !showSingletonGuide" 
+                      class="solve-button" 
+                      style="font-size: 14px; padding: 8px 16px; margin-bottom: 10px;">
+                      {{ showSingletonGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
+                    </button>
+                  </div>
+                  <div style="margin: 15px 0;">
+                    <input
+                      v-model="singletonAnswer"
+                      placeholder="Type your answer here"
+                      class="answer-input"
+                      style="width: 100%; max-width: 400px; font-size: 16px;"
+                    />
+                  </div>
+                  <div style="margin-top: 15px;">
+                    <button @click="checkSingletonAnswer" class="submit-button" :disabled="!singletonAnswer.trim()" style="padding: 10px 30px; font-size: 16px;">LET'S CHECK</button>
+                  </div>
+                  <div v-if="singletonFeedback" class="result-box" style="margin-top: 15px;">
+                    <p>{{ singletonFeedback }}</p>
+                  </div>
+                  <div v-if="singletonInputGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
+                </div>
+                <!-- TRY THIS Card (Empty Set) -->
+                <div class="problem-box">
+                  <h4>Mastery Quiz 2</h4>
+                  <p><strong>Which of the following is a singleton set?</strong></p>
+                  <div v-for="(option, idx) in singletonQuiz.options" :key="idx" class="option-box">
+                    <label class="option-label">
+                      <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
+                      <input type="radio" name="singletonQuiz" :value="option" v-model="singletonQuizAnswer" />
+                      <span class="option-text">{{ option }}</span>
+                    </label>
+                  </div>
+                  <!-- CHANGED: Larger buttons for Singleton Mastery Quiz 2 -->
+                  <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
+                    <button @click="checkSingletonQuiz" class="submit-button larger-button" :disabled="!singletonQuizAnswer">LET'S CHECK</button>
+                    <button @click="singletonPageActive = true" class="next-button larger-button">➡️ Next</button>
+                  </div>
+                  <div v-if="singletonQuizFeedback" class="result-box">
+                    <p>{{ singletonQuizFeedback }}</p>
+                  </div>
+                  <div v-if="singletonQuizGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
+                </div>
+              </div>
+              <!-- INFINITE SET, EQUAL SET, UNEQUAL SET SPECIAL CONTENT -->
+              <div v-else-if="topic.type === 'infinite'">
+                <!-- Step-by-step card ABOVE Try This -->
+                <div v-if="showInfiniteGuide" class="guide-box">
+                  <h4>📘 YOUR GUIDE</h4>
+                  <p v-for="(step, sIdx) in infiniteSteps" :key="sIdx">
+                    <button @click="toggleInfiniteStep(sIdx)" class="step-button">
+                      Step {{ sIdx + 1 }}
+                    </button>
+                    <span v-if="infiniteRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
+                  </p>
+                </div>
+                <!-- LET'S TRY Card (Infinite Set) - UPDATED FORMAT -->
+                <div class="problem-box">
+                  <h4>Mastery quiz 1</h4>
+                  <p><strong>Give an example of an infinite set.</strong></p>
+                  <!-- UPDATED: Format similar to the image - LEFT ALIGNED -->
+                  <div style="margin: 10px 0;">
+                    <button 
+                      @click="showInfiniteGuide = !showInfiniteGuide" 
+                      class="solve-button" 
+                      style="font-size: 14px; padding: 8px 16px; margin-bottom: 10px;">
+                      {{ showInfiniteGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
+                    </button>
+                  </div>
+                  <div style="margin: 15px 0;">
+                    <input
+                      v-model="infiniteAnswer"
+                      placeholder="Type your answer here"
+                      class="answer-input"
+                      style="width: 100%; max-width: 400px; font-size: 16px;"
+                    />
+                  </div>
+                  <div style="margin-top: 15px;">
+                    <button @click="checkInfiniteAnswer" class="submit-button" :disabled="!infiniteAnswer.trim()" style="padding: 10px 30px; font-size: 16px;">LET'S CHECK</button>
+                  </div>
+                  <div v-if="infiniteFeedback" class="result-box" style="margin-top: 15px;">
+                    <p>{{ infiniteFeedback }}</p>
+                  </div>
+                  <div v-if="infiniteGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
+                </div>
+                <!-- TRY THIS Card (Infinite Set Quiz) -->
+                <div class="problem-box">
+                  <h4> Mastery Quiz 2</h4>
+                  <p><strong>Which of the following is an infinite set?</strong></p>
+                  <div v-for="(option, idx) in infiniteQuiz.options" :key="idx" class="option-box">
+                    <label class="option-label">
+                      <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
+                      <input type="radio" name="infiniteQuiz" :value="option" v-model="infiniteQuizAnswer" />
+                      <span class="option-text">{{ option }}</span>
+                    </label>
+                  </div>
+                  <!-- CHANGED: Larger buttons for Infinite Set Mastery Quiz 2 -->
+                  <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
+                    <button @click="checkInfiniteQuiz" class="submit-button larger-button" :disabled="!infiniteQuizAnswer">LET'S CHECK</button>
+                    <button @click="infinitePageActive = true" class="next-button larger-button">➡️ Next</button>
+                  </div>
+                  <div v-if="infiniteQuizFeedback" class="result-box">
+                    <p>{{ infiniteQuizFeedback }}</p>
+                  </div>
+                  <div v-if="infiniteQuizGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
+                </div>
+              </div>
+              <!-- SUBSET SUPERSET, UNIVERSAL SET, POWER SET SPECIAL CONTENT -->
+              <div v-else-if="topic.type === 'subsuper'">
+                <!-- Step-by-step card ABOVE Try This -->
+                <div v-if="showSubSupGuide" class="guide-box">
+                  <h4>📘 YOUR GUIDE</h4>
+                  <p v-for="(step, sIdx) in subSupSteps" :key="sIdx">
+                    <button @click="toggleSubSupStep(sIdx)" class="step-button">
+                      Step {{ sIdx + 1 }}
+                    </button>
+                    <span v-if="subSupRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
+                  </p>
+                </div>
+                <!-- LET'S TRY Card (Subset Superset) - UPDATED FORMAT -->
+                <div class="problem-box">
+                  <h4>Mastery quiz 1</h4>
+                  <p><strong>Provide a subset of {1, 2, 3, 4}.</strong></p>
+                  <!-- UPDATED: Format similar to the image - LEFT ALIGNED -->
+                  <div style="margin: 10px 0;">
+                    <button 
+                      @click="showSubSupGuide = !showSubSupGuide" 
+                      class="solve-button" 
+                      style="font-size: 14px; padding: 8px 16px; margin-bottom: 10px;">
+                      {{ showSubSupGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
+                    </button>
+                  </div>
+                  <div style="margin: 15px 0;">
+                    <input
+                      v-model="subSupAnswer"
+                      placeholder="Type your answer here"
+                      class="answer-input"
+                      style="width: 100%; max-width: 400px; font-size: 16px;"
+                    />
+                  </div>
+                  <div style="margin-top: 15px;">
+                    <button @click="checkSubSupAnswer" class="submit-button" :disabled="!subSupAnswer.trim()" style="padding: 10px 30px; font-size: 16px;">LET'S CHECK</button>
+                  </div>
+                  <div v-if="subSupFeedback" class="result-box" style="margin-top: 15px;">
+                    <p>{{ subSupFeedback }}</p>
+                  </div>
+                  <div v-if="subSupInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+                </div>
+                <!-- TRY THIS Card (Superset Quiz) -->
+                <div class="problem-box">
+                  <h4> Mastery Quiz 2</h4>
+                  <p><strong>Which of the following is a superset of {1,2}?</strong></p>
+                  <div v-for="(option, idx) in subSupQuiz.options" :key="idx" class="option-box">
+                    <label class="option-label">
+                      <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
+                      <input type="radio" name="subSupQuiz" :value="option" v-model="subSupQuizAnswer" />
+                      <span class="option-text">{{ option }}</span>
+                    </label>
+                  </div>
+                  <!-- CHANGED: Larger buttons for Subset Mastery Quiz 2 -->
+                  <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
+                    <button @click="checkSubSupQuiz" class="submit-button larger-button" :disabled="!subSupQuizAnswer">LET'S CHECK</button>
+                    <button @click="universalPageActive = true" class="next-button larger-button">➡️ Next</button>
+                  </div>
+                  <div v-if="subSupQuizFeedback" class="result-box">
+                    <p>{{ subSupQuizFeedback }}</p>
+                  </div>
+                  <div v-if="subSupQuizGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Selected Topic View - Only Selected Topic Visible -->
+        <div v-if="selectedTopic !== null && !subsetPageActive && !unionPageActive && !singletonPageActive && !singletonRepresentationPageActive && !infinitePageActive && !infiniteRepresentationPageActive && !universalPageActive && !powerSetPageActive" class="content-box">
+          <h4 class="clickable-title" @click="toggleTopic(selectedTopic)" style="cursor: pointer;">
+            {{ topics[selectedTopic].title }}
+          </h4>
+          <div>
+            <p v-html="formatContent(topics[selectedTopic].content)"></p>
+            <!-- INTRO SPECIAL CONTENT -->
+            <div v-if="topics[selectedTopic].type === 'intro'">
+              <div style="background-color: #eeede9; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #efd56d;">
+                <!-- NEW: Quiz Card for Set Symbols - FORMATTED LIKE THE IMAGE -->
+                <div class="problem-box" style="margin-bottom: 15px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #ddd;">
+                  <h4 style="text-align: center; color: #333; margin-bottom: 15px;">📝 Set Symbols Quiz</h4>
+                  <div style="margin-bottom: 15px; padding: 10px; background-color: #e9f7fe; border-radius: 5px; border-left: 4px solid #2196F3;">
+                    <p style="font-weight: bold; color: #0d47a1; margin: 0;">
+                      Complete all 5 questions to unlock the Set Symbols table:
+                    </p>
+                  </div>
+                  
+                  <!-- Quiz Question 1 - EXACTLY LIKE THE IMAGE -->
+                  <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                    <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                      1. which of these is the symbol of set ?
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz1" 
+                          value="U" 
+                          v-model="setSymbolsAnswers[0]"
+                          :disabled="setSymbolsQuiz[0].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>A. U</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz1" 
+                          value="A ∪ B" 
+                          v-model="setSymbolsAnswers[0]"
+                          :disabled="setSymbolsQuiz[0].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>B. A ∪ B</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz1" 
+                          value="{ }" 
+                          v-model="setSymbolsAnswers[0]"
+                          :disabled="setSymbolsQuiz[0].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>C. { }</span>
+                      </label>
+                    </div>
+                    
+                    <!-- Submit Button and Feedback for Question 1 -->
+                    <div v-if="setSymbolsAnswers[0] && !setSymbolsQuiz[0].answered" style="margin-top: 10px;">
+                      <button @click="checkSetSymbolsAnswer(0)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Submit Answer
+                      </button>
+                    </div>
+                    <div v-if="setSymbolsQuiz[0].answered" style="margin-top: 10px; font-weight: bold;">
+                      <span v-if="setSymbolsQuiz[0].correct" style="color: green;">✅ Correct!</span>
+                      <span v-else style="color: red;">❌ Incorrect. Correct answer: { }</span>
+                    </div>
+                  </div>
+
+                  <!-- Quiz Question 2 -->
+                  <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                    <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                      2. Which symbol represents the universal set?
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz2" 
+                          value="∅" 
+                          v-model="setSymbolsAnswers[1]"
+                          :disabled="setSymbolsQuiz[1].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>A. ∅</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz2" 
+                          value="U" 
+                          v-model="setSymbolsAnswers[1]"
+                          :disabled="setSymbolsQuiz[1].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>B. U</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz2" 
+                          value="∈" 
+                          v-model="setSymbolsAnswers[1]"
+                          :disabled="setSymbolsQuiz[1].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>C. ∈</span>
+                      </label>
+                    </div>
+                    
+                    <div v-if="setSymbolsAnswers[1] && !setSymbolsQuiz[1].answered" style="margin-top: 10px;">
+                      <button @click="checkSetSymbolsAnswer(1)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Submit Answer
+                      </button>
+                    </div>
+                    <div v-if="setSymbolsQuiz[1].answered" style="margin-top: 10px; font-weight: bold;">
+                      <span v-if="setSymbolsQuiz[1].correct" style="color: green;">✅ Correct!</span>
+                      <span v-else style="color: red;">❌ Incorrect. Correct answer: U</span>
+                    </div>
+                  </div>
+
+                  <!-- Quiz Question 3 - UPDATED -->
+                  <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                    <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                      3. What is the symbol of Null or empty set?
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz3" 
+                          value="U" 
+                          v-model="setSymbolsAnswers[2]"
+                          :disabled="setSymbolsQuiz[2].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>A. U</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz3" 
+                          value="∅" 
+                          v-model="setSymbolsAnswers[2]"
+                          :disabled="setSymbolsQuiz[2].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>B. ∅</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz3" 
+                          value="∈" 
+                          v-model="setSymbolsAnswers[2]"
+                          :disabled="setSymbolsQuiz[2].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>C. ∈</span>
+                      </label>
+                    </div>
+                    
+                    <div v-if="setSymbolsAnswers[2] && !setSymbolsQuiz[2].answered" style="margin-top: 10px;">
+                      <button @click="checkSetSymbolsAnswer(2)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Submit Answer
+                      </button>
+                    </div>
+                    <div v-if="setSymbolsQuiz[2].answered" style="margin-top: 10px; font-weight: bold;">
+                      <span v-if="setSymbolsQuiz[2].correct" style="color: green;">✅ Correct!</span>
+                      <span v-else style="color: red;">❌ Incorrect. Correct answer: ∅</span>
+                    </div>
+                  </div>
+
+                  <!-- Quiz Question 4 - UPDATED -->
+                  <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #e0e0e0;">
+                    <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                      4. What is the symbol of Set A intersection set B?
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz4" 
+                          value="A ∪ B" 
+                          v-model="setSymbolsAnswers[3]"
+                          :disabled="setSymbolsQuiz[3].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>A. A ∪ B</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz4" 
+                          value="A ∩ B" 
+                          v-model="setSymbolsAnswers[3]"
+                          :disabled="setSymbolsQuiz[3].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>B. A ∩ B</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz4" 
+                          value="A ⊆ B" 
+                          v-model="setSymbolsAnswers[3]"
+                          :disabled="setSymbolsQuiz[3].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>C. A ⊆ B</span>
+                      </label>
+                    </div>
+                    
+                    <div v-if="setSymbolsAnswers[3] && !setSymbolsQuiz[3].answered" style="margin-top: 10px;">
+                      <button @click="checkSetSymbolsAnswer(3)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Submit Answer
+                      </button>
+                    </div>
+                    <div v-if="setSymbolsQuiz[3].answered" style="margin-top: 10px; font-weight: bold;">
+                      <span v-if="setSymbolsQuiz[3].correct" style="color: green;">✅ Correct!</span>
+                      <span v-else style="color: red;">❌ Incorrect. Correct answer: A ∩ B</span>
+                    </div>
+                  </div>
+
+                  <!-- Quiz Question 5 - UPDATED -->
+                  <div style="background-color: white; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #e0e0e0;">
+                    <p style="font-weight: bold; margin-bottom: 8px; color: #333;">
+                      5. What is the symbol of Set A is a subset of set B?
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz5" 
+                          value="A ∪ B" 
+                          v-model="setSymbolsAnswers[4]"
+                          :disabled="setSymbolsQuiz[4].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>A. A ∪ B</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz5" 
+                          value="A ∩ B" 
+                          v-model="setSymbolsAnswers[4]"
+                          :disabled="setSymbolsQuiz[4].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>B. A ∩ B</span>
+                      </label>
+                      <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input 
+                          type="radio" 
+                          name="setQuiz5" 
+                          value="A ⊆ B" 
+                          v-model="setSymbolsAnswers[4]"
+                          :disabled="setSymbolsQuiz[4].answered"
+                          style="margin-right: 8px;"
+                        />
+                        <span>C. A ⊆ B</span>
+                      </label>
+                    </div>
+                    
+                    <div v-if="setSymbolsAnswers[4] && !setSymbolsQuiz[4].answered" style="margin-top: 10px;">
+                      <button @click="checkSetSymbolsAnswer(4)" class="submit-button" style="padding: 6px 12px; font-size: 12px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Submit Answer
+                      </button>
+                    </div>
+                    <div v-if="setSymbolsQuiz[4].answered" style="margin-top: 10px; font-weight: bold;">
+                      <span v-if="setSymbolsQuiz[4].correct" style="color: green;">✅ Correct!</span>
+                      <span v-else style="color: red;">❌ Incorrect. Correct answer: A ⊆ B</span>
+                    </div>
+                  </div>
+                  
+                  <!-- Quiz Progress with SCORE - UPDATED -->
+                  <div style="margin-top: 15px; padding: 10px; background-color: #e8f4fd; border-radius: 5px; border: 1px solid #bbdefb;">
+                    <p style="font-weight: bold; color: #1565c0; margin-bottom: 5px;">
+                      Progress: {{ completedSetSymbolsQuizCount }}/5 questions completed
+                    </p>
+                    <p style="font-weight: bold; color: #1565c0; margin-bottom: 5px;">
+                      Your Score: {{ setSymbolsScore }}/5
+                    </p>
+                    <div v-if="completedSetSymbolsQuizCount === 5" style="color: #2e7d32; font-weight: bold; padding: 8px; background-color: #e8f5e9; border-radius: 4px; border: 1px solid #c8e6c9;">
+                      🎉 Quiz completed! You can now view the Set Symbols table.
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Toggle button for Set Symbols -->
+                <div style="text-align: center; margin-bottom: 15px;">
+                  <button 
+                    @click="toggleSetSymbols" 
+                    class="solve-button" 
+                    style="margin-bottom: 10px; padding: 10px 20px; font-size: 14px; font-weight: bold; background-color: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer;"
+                    :disabled="completedSetSymbolsQuizCount < 5"
+                    :style="{ 
+                      backgroundColor: completedSetSymbolsQuizCount < 5 ? '#ccc' : '#2196F3',
+                      cursor: completedSetSymbolsQuizCount < 5 ? 'not-allowed' : 'pointer'
+                    }"
+                  >
+                    {{ showSetSymbols ? "🔽 HIDE SET SYMBOLS" : "📘 SHOW SET SYMBOLS" }}
+                  </button>
+                </div>
+                
+                <!-- Error message if quiz not completed -->
+                <div v-if="showSetSymbolsError" style="color: #d32f2f; background-color: #ffebee; padding: 12px; border-radius: 5px; margin-bottom: 10px; border: 1px solid #ef9a9a; text-align: center; font-weight: bold;">
+                  ⚠️ Complete all 5 quiz questions to unlock the Set Symbols table!
+                </div>
+
+                <!-- Set Symbols Table (Toggleable) -->
+                <div v-if="showSetSymbols && completedSetSymbolsQuizCount === 5" style="margin-top: 15px;">
+                  <h4 style="text-align: center; color: #333; margin-bottom: 15px;">Set Symbols</h4>
+                  <table style="width: 100%; border-collapse: collapse; border: 2px solid #efd56d; border-radius: 8px; overflow: hidden;">
+                    <thead>
+                      <tr style="background-color: #eeede9;">
+                        <th style="border: 1px solid #efd56d; padding: 12px; text-align: center; font-weight: bold; color: #333;">Symbols</th>
+                        <th style="border: 1px solid #efd56d; padding: 12px; text-align: center; font-weight: bold; color: #333;">Meaning</th>
+                      </tr>
+                      </thead>
+                    <tbody>
+                      <tr style="background-color: white;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">{ }</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Symbol of set</td>
+                      </tr>
+                      <tr style="background-color: #f9f9f9;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">U</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Universal set</td>
+                      </tr>
+                      <tr style="background-color: white;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">n(X)</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Cardinal number of set X</td>
+                      </tr>
+                      <tr style="background-color: #f9f9f9;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">b ∈ A</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">'b' is an element of set A</td>
+                      </tr>
+                      <tr style="background-color: white;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">a ∉ B</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">'a' is not an element of set B</td>
+                      </tr>
+                      <tr style="background-color: #f9f9f9;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">∅</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Null or empty set</td>
+                      </tr>
+                      <tr style="background-color: white;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">A ∪ B</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Set A union set B</td>
+                      </tr>
+                      <tr style="background-color: #f9f9f9;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">A ∩ B</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Set A intersection set B</td>
+                      </tr>
+                      <tr style="background-color: white;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">A ⊆ B</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Set A is a subset of set B</td>
+                      </tr>
+                      <tr style="background-color: #f9f9f9;">
+                        <td style="border: 1px solid #efd56d; padding: 10px; text-align: center; font-weight: bold;">B ⊇ A</td>
+                        <td style="border: 1px solid #efd56d; padding: 10px;">Set B is the superset of set A</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                <!-- Next Lesson Button -->
+                <div style="text-align: center; margin-top: 20px;">
+                  <button @click="goToNextLesson" class="next-button" style="padding: 12px 24px; font-size: 16px; font-weight: bold; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    ➡️ Next Lesson
+                  </button>
+                </div>
+              </div>
+            </div>
             <!-- SETS, CARDINALITY, REPRESENTATION OF SETS SPECIAL CONTENT -->
-            <div v-if="topic.type === 'sets'">
+            <div v-if="topics[selectedTopic].type === 'sets'">
               <!-- LET'S TRY Card (Sets) -->
               <div class="problem-box">
                 <h4> Mastery Quiz 1</h4>
@@ -47,7 +1036,7 @@
                   placeholder="Type your answer here"
                   class="answer-input"
                 />
-                <button @click="checkSubsetAnswer" class="submit-button" :disabled="!subsetAnswer.trim()"> Let's CHECK </button>
+                <button @click="checkSubsetAnswer" class="submit-button" :disabled="!subsetAnswer.trim()"> LET'S CHECK </button>
                 <div v-if="subsetFeedback" class="result-box">
                   <p>{{ subsetFeedback }}</p>
                 </div>
@@ -64,9 +1053,10 @@
                     <span class="option-text">{{ option }}</span>
                   </label>
                 </div>
+                <!-- CHANGED: Larger buttons for Sets Mastery Quiz 2 -->
                 <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                  <button @click="checkSubsetQuiz" class="submit-button" :disabled="!subsetQuizAnswer">Let's CHECK</button>
-                  <button @click="subsetPageActive = true" class="next-button">➡️ Next</button>
+                  <button @click="checkSubsetQuiz" class="submit-button larger-button" :disabled="!subsetQuizAnswer">LET'S CHECK</button>
+                  <button @click="subsetPageActive = true" class="next-button larger-button">➡️ Next</button>
                 </div>
                 <div v-if="subsetQuizFeedback" class="result-box">
                   <p>{{ subsetQuizFeedback }}</p>
@@ -75,7 +1065,7 @@
               </div>
             </div>
             <!-- SINGLETON SET, EMPTY SET, FINITE SET SPECIAL CONTENT -->
-            <div v-else-if="topic.type === 'singleton'">
+            <div v-else-if="topics[selectedTopic].type === 'singleton'">
               <!-- Step-by-step card ABOVE Try This -->
               <div v-if="showSingletonGuide" class="guide-box">
                 <h4>📘 YOUR GUIDE</h4>
@@ -86,24 +1076,31 @@
                   <span v-if="singletonRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
                 </p>
               </div>
-              <!-- LET'S TRY Card (Singleton Set) -->
+              <!-- LET'S TRY Card (Singleton Set) - UPDATED FORMAT -->
               <div class="problem-box">
-                <h4>Mastery Quiz 1</h4>
+                <h4>Mastery quiz 1</h4>
                 <p><strong>Give a singleton set containing the number 3.</strong></p>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <!-- Toggle button for Step-by-step guide (on left) -->
-                  <button @click="showSingletonGuide = !showSingletonGuide" class="solve-button" style="font-size: 12px; padding: 4px 8px;">
+                <!-- UPDATED: Format similar to the image - LEFT ALIGNED -->
+                <div style="margin: 10px 0;">
+                  <button 
+                    @click="showSingletonGuide = !showSingletonGuide" 
+                    class="solve-button" 
+                    style="font-size: 14px; padding: 8px 16px; margin-bottom: 10px;">
                     {{ showSingletonGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
                   </button>
+                </div>
+                <div style="margin: 15px 0;">
                   <input
                     v-model="singletonAnswer"
                     placeholder="Type your answer here"
                     class="answer-input"
+                    style="width: 100%; max-width: 400px; font-size: 16px;"
                   />
-                  <!-- CHECK ANSWER button (on right) -->
-                  <button @click="checkSingletonAnswer" class="submit-button" :disabled="!singletonAnswer.trim()" style="font-size: 12px; padding: 4px 8px;">Let's CHECK</button>
                 </div>
-                <div v-if="singletonFeedback" class="result-box">
+                <div style="margin-top: 15px;">
+                  <button @click="checkSingletonAnswer" class="submit-button" :disabled="!singletonAnswer.trim()" style="padding: 10px 30px; font-size: 16px;">LET'S CHECK</button>
+                </div>
+                <div v-if="singletonFeedback" class="result-box" style="margin-top: 15px;">
                   <p>{{ singletonFeedback }}</p>
                 </div>
                 <div v-if="singletonInputGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
@@ -119,9 +1116,10 @@
                     <span class="option-text">{{ option }}</span>
                   </label>
                 </div>
+                <!-- CHANGED: Larger buttons for Singleton Mastery Quiz 2 -->
                 <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                  <button @click="checkSingletonQuiz" class="submit-button" :disabled="!singletonQuizAnswer">Let's CHECK</button>
-                  <button @click="singletonPageActive = true" class="next-button">➡️ Next</button>
+                  <button @click="checkSingletonQuiz" class="submit-button larger-button" :disabled="!singletonQuizAnswer">LET'S CHECK</button>
+                  <button @click="singletonPageActive = true" class="next-button larger-button">➡️ Next</button>
                 </div>
                 <div v-if="singletonQuizFeedback" class="result-box">
                   <p>{{ singletonQuizFeedback }}</p>
@@ -130,7 +1128,7 @@
               </div>
             </div>
             <!-- INFINITE SET, EQUAL SET, UNEQUAL SET SPECIAL CONTENT -->
-            <div v-else-if="topic.type === 'infinite'">
+            <div v-else-if="topics[selectedTopic].type === 'infinite'">
               <!-- Step-by-step card ABOVE Try This -->
               <div v-if="showInfiniteGuide" class="guide-box">
                 <h4>📘 YOUR GUIDE</h4>
@@ -141,24 +1139,31 @@
                   <span v-if="infiniteRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
                 </p>
               </div>
-              <!-- LET'S TRY Card (Infinite Set) -->
+              <!-- LET'S TRY Card (Infinite Set) - UPDATED FORMAT -->
               <div class="problem-box">
-                <h4>Mastery Quiz 1</h4>
+                <h4>Mastery quiz 1</h4>
                 <p><strong>Give an example of an infinite set.</strong></p>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <!-- Toggle button for Step-by-step guide (on left) -->
-                  <button @click="showInfiniteGuide = !showInfiniteGuide" class="solve-button">
+                <!-- UPDATED: Format similar to the image - LEFT ALIGNED -->
+                <div style="margin: 10px 0;">
+                  <button 
+                    @click="showInfiniteGuide = !showInfiniteGuide" 
+                    class="solve-button" 
+                    style="font-size: 14px; padding: 8px 16px; margin-bottom: 10px;">
                     {{ showInfiniteGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
                   </button>
+                </div>
+                <div style="margin: 15px 0;">
                   <input
                     v-model="infiniteAnswer"
                     placeholder="Type your answer here"
                     class="answer-input"
+                    style="width: 100%; max-width: 400px; font-size: 16px;"
                   />
-                  <!-- CHECK ANSWER button (on right) -->
-                  <button @click="checkInfiniteAnswer" class="submit-button" :disabled="!infiniteAnswer.trim()"> Let's CHECK </button>
                 </div>
-                <div v-if="infiniteFeedback" class="result-box">
+                <div style="margin-top: 15px;">
+                  <button @click="checkInfiniteAnswer" class="submit-button" :disabled="!infiniteAnswer.trim()" style="padding: 10px 30px; font-size: 16px;">LET'S CHECK</button>
+                </div>
+                <div v-if="infiniteFeedback" class="result-box" style="margin-top: 15px;">
                   <p>{{ infiniteFeedback }}</p>
                 </div>
                 <div v-if="infiniteGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
@@ -174,9 +1179,10 @@
                     <span class="option-text">{{ option }}</span>
                   </label>
                 </div>
+                <!-- CHANGED: Larger buttons for Infinite Set Mastery Quiz 2 -->
                 <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                  <button @click="checkInfiniteQuiz" class="submit-button" :disabled="!infiniteQuizAnswer">Let's CHECK</button>
-                  <button @click="infinitePageActive = true" class="next-button">➡️ Next</button>
+                  <button @click="checkInfiniteQuiz" class="submit-button larger-button" :disabled="!infiniteQuizAnswer">LET'S CHECK</button>
+                  <button @click="infinitePageActive = true" class="next-button larger-button">➡️ Next</button>
                 </div>
                 <div v-if="infiniteQuizFeedback" class="result-box">
                   <p>{{ infiniteQuizFeedback }}</p>
@@ -185,7 +1191,7 @@
               </div>
             </div>
             <!-- SUBSET SUPERSET, UNIVERSAL SET, POWER SET SPECIAL CONTENT -->
-            <div v-else-if="topic.type === 'subsuper'">
+            <div v-else-if="topics[selectedTopic].type === 'subsuper'">
               <!-- Step-by-step card ABOVE Try This -->
               <div v-if="showSubSupGuide" class="guide-box">
                 <h4>📘 YOUR GUIDE</h4>
@@ -196,24 +1202,31 @@
                   <span v-if="subSupRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
                 </p>
               </div>
-              <!-- LET'S TRY Card (Subset Superset) -->
+              <!-- LET'S TRY Card (Subset Superset) - UPDATED FORMAT -->
               <div class="problem-box">
-                <h4>Mastery Quiz 1</h4>
+                <h4>Mastery quiz 1</h4>
                 <p><strong>Provide a subset of {1, 2, 3, 4}.</strong></p>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <!-- Toggle button for Step-by-step guide (on left) -->
-                  <button @click="showSubSupGuide = !showSubSupGuide" class="solve-button">
+                <!-- UPDATED: Format similar to the image - LEFT ALIGNED -->
+                <div style="margin: 10px 0;">
+                  <button 
+                    @click="showSubSupGuide = !showSubSupGuide" 
+                    class="solve-button" 
+                    style="font-size: 14px; padding: 8px 16px; margin-bottom: 10px;">
                     {{ showSubSupGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
                   </button>
+                </div>
+                <div style="margin: 15px 0;">
                   <input
                     v-model="subSupAnswer"
                     placeholder="Type your answer here"
                     class="answer-input"
+                    style="width: 100%; max-width: 400px; font-size: 16px;"
                   />
-                  <!-- CHECK ANSWER button (on right) -->
-                  <button @click="checkSubSupAnswer" class="submit-button" :disabled="!subSupAnswer.trim()"> Let's CHECK</button>
                 </div>
-                <div v-if="subSupFeedback" class="result-box">
+                <div style="margin-top: 15px;">
+                  <button @click="checkSubSupAnswer" class="submit-button" :disabled="!subSupAnswer.trim()" style="padding: 10px 30px; font-size: 16px;">LET'S CHECK</button>
+                </div>
+                <div v-if="subSupFeedback" class="result-box" style="margin-top: 15px;">
                   <p>{{ subSupFeedback }}</p>
                 </div>
                 <div v-if="subSupInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
@@ -229,9 +1242,10 @@
                     <span class="option-text">{{ option }}</span>
                   </label>
                 </div>
+                <!-- CHANGED: Larger buttons for Subset Mastery Quiz 2 -->
                 <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                  <button @click="checkSubSupQuiz" class="submit-button" :disabled="!subSupQuizAnswer">Let's CHECK</button>
-                  <button @click="universalPageActive = true" class="next-button">➡️ Next</button>
+                  <button @click="checkSubSupQuiz" class="submit-button larger-button" :disabled="!subSupQuizAnswer">LET'S CHECK</button>
+                  <button @click="universalPageActive = true" class="next-button larger-button">➡️ Next</button>
                 </div>
                 <div v-if="subSupQuizFeedback" class="result-box">
                   <p>{{ subSupQuizFeedback }}</p>
@@ -241,623 +1255,409 @@
             </div>
           </div>
         </div>
-      </div>
-      <!-- Selected Topic View - Only Selected Topic Visible -->
-      <div v-if="selectedTopic !== null && !subsetPageActive && !unionPageActive && !singletonPageActive && !singletonRepresentationPageActive && !infinitePageActive && !infiniteRepresentationPageActive && !universalPageActive && !powerSetPageActive" class="content-box">
-        <h4 class="clickable-title" @click="toggleTopic(selectedTopic)" style="cursor: pointer;">
-          {{ topics[selectedTopic].title }}
-        </h4>
-        <div>
-          <p v-html="formatContent(topics[selectedTopic].content)"></p>
-          <!-- SETS, CARDINALITY, REPRESENTATION OF SETS SPECIAL CONTENT -->
-          <div v-if="topics[selectedTopic].type === 'sets'">
-            <!-- LET'S TRY Card (Sets) -->
-            <div class="problem-box">
-              <h4> Mastery Quiz 1</h4>
-              <p><strong>Provide a set of vowels in the English alphabet?</strong></p>
-              <input
-                v-model="subsetAnswer"
-                placeholder="Type your answer here"
-                class="answer-input"
-              />
-              <button @click="checkSubsetAnswer" class="submit-button" :disabled="!subsetAnswer.trim()"> Let's CHECK </button>
-              <div v-if="subsetFeedback" class="result-box">
-                <p>{{ subsetFeedback }}</p>
-              </div>
-              <div v-if="subsetGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
-            </div>
-            <!-- TRY THIS Card (Representation of Sets) -->
-            <div class="problem-box">
-              <h4> Mastery Quiz 2</h4>
-              <p><strong>Which of the following represent the set of even numbers?</strong></p>
-              <div v-for="(option, idx) in subsetQuiz.options" :key="idx" class="option-box">
-                <label class="option-label">
-                  <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
-                  <input type="radio" name="subsetQuiz" :value="option" v-model="subsetQuizAnswer" />
-                  <span class="option-text">{{ option }}</span>
-                </label>
-              </div>
-              <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                <button @click="checkSubsetQuiz" class="submit-button" :disabled="!subsetQuizAnswer">Let's CHECK</button>
-                <button @click="subsetPageActive = true" class="next-button">➡️ Next</button>
-              </div>
-              <div v-if="subsetQuizFeedback" class="result-box">
-                <p>{{ subsetQuizFeedback }}</p>
-              </div>
-              <div v-if="subsetQuizGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
-            </div>
-          </div>
-          <!-- SINGLETON SET, EMPTY SET, FINITE SET SPECIAL CONTENT -->
-          <div v-else-if="topics[selectedTopic].type === 'singleton'">
-            <!-- Step-by-step card ABOVE Try This -->
-            <div v-if="showSingletonGuide" class="guide-box">
-              <h4>📘 YOUR GUIDE</h4>
-              <p v-for="(step, sIdx) in singletonSteps" :key="sIdx">
-                <button @click="toggleSingletonStep(sIdx)" class="step-button">
-                  Step {{ sIdx + 1 }}
-                </button>
-                <span v-if="singletonRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
-              </p>
-            </div>
-            <!-- LET'S TRY Card (Singleton Set) -->
-            <div class="problem-box">
-              <h4>Mastery Quiz 1</h4>
-              <p><strong>Give a singleton set containing the number 3.</strong></p>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Toggle button for Step-by-step guide (on left) -->
-                <button @click="showSingletonGuide = !showSingletonGuide" class="solve-button" style="font-size: 12px; padding: 4px 8px;">
-                  {{ showSingletonGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
-                </button>
-                <input
-                  v-model="singletonAnswer"
-                  placeholder="Type your answer here"
-                  class="answer-input"
-                />
-                <!-- CHECK ANSWER button (on right) -->
-                <button @click="checkSingletonAnswer" class="submit-button" :disabled="!singletonAnswer.trim()" style="font-size: 12px; padding: 4px 8px;">Let's CHECK</button>
-              </div>
-              <div v-if="singletonFeedback" class="result-box">
-                <p>{{ singletonFeedback }}</p>
-              </div>
-              <div v-if="singletonInputGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
-            </div>
-            <!-- TRY THIS Card (Empty Set) -->
-            <div class="problem-box">
-              <h4>Mastery Quiz 2</h4>
-              <p><strong>Which of the following is a singleton set?</strong></p>
-              <div v-for="(option, idx) in singletonQuiz.options" :key="idx" class="option-box">
-                <label class="option-label">
-                  <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
-                  <input type="radio" name="singletonQuiz" :value="option" v-model="singletonQuizAnswer" />
-                  <span class="option-text">{{ option }}</span>
-                </label>
-              </div>
-              <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                <button @click="checkSingletonQuiz" class="submit-button" :disabled="!singletonQuizAnswer">Let's CHECK</button>
-                <button @click="singletonPageActive = true" class="next-button">➡️ Next</button>
-              </div>
-              <div v-if="singletonQuizFeedback" class="result-box">
-                <p>{{ singletonQuizFeedback }}</p>
-              </div>
-              <div v-if="singletonQuizGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
-            </div>
-          </div>
-          <!-- INFINITE SET, EQUAL SET, UNEQUAL SET SPECIAL CONTENT -->
-          <div v-else-if="topics[selectedTopic].type === 'infinite'">
-            <!-- Step-by-step card ABOVE Try This -->
-            <div v-if="showInfiniteGuide" class="guide-box">
-              <h4>📘 YOUR GUIDE</h4>
-              <p v-for="(step, sIdx) in infiniteSteps" :key="sIdx">
-                <button @click="toggleInfiniteStep(sIdx)" class="step-button">
-                  Step {{ sIdx + 1 }}
-                </button>
-                <span v-if="infiniteRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
-              </p>
-            </div>
-            <!-- LET'S TRY Card (Infinite Set) -->
-            <div class="problem-box">
-              <h4>Mastery Quiz 1</h4>
-              <p><strong>Give an example of an infinite set.</strong></p>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Toggle button for Step-by-step guide (on left) -->
-                <button @click="showInfiniteGuide = !showInfiniteGuide" class="solve-button">
-                  {{ showInfiniteGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
-                </button>
-                <input
-                  v-model="infiniteAnswer"
-                  placeholder="Type your answer here"
-                  class="answer-input"
-                />
-                <!-- CHECK ANSWER button (on right) -->
-                <button @click="checkInfiniteAnswer" class="submit-button" :disabled="!infiniteAnswer.trim()"> Let's CHECK </button>
-              </div>
-              <div v-if="infiniteFeedback" class="result-box">
-                <p>{{ infiniteFeedback }}</p>
-              </div>
-              <div v-if="infiniteGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
-            </div>
-            <!-- TRY THIS Card (Infinite Set Quiz) -->
-            <div class="problem-box">
-              <h4> Mastery Quiz 2</h4>
-              <p><strong>Which of the following is an infinite set?</strong></p>
-              <div v-for="(option, idx) in infiniteQuiz.options" :key="idx" class="option-box">
-                <label class="option-label">
-                  <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
-                  <input type="radio" name="infiniteQuiz" :value="option" v-model="infiniteQuizAnswer" />
-                  <span class="option-text">{{ option }}</span>
-                </label>
-              </div>
-              <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                <button @click="checkInfiniteQuiz" class="submit-button" :disabled="!infiniteQuizAnswer">Let's CHECK</button>
-                <button @click="infinitePageActive = true" class="next-button">➡️ Next</button>
-              </div>
-              <div v-if="infiniteQuizFeedback" class="result-box">
-                <p>{{ infiniteQuizFeedback }}</p>
-              </div>
-              <div v-if="infiniteQuizGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
-            </div>
-          </div>
-          <!-- SUBSET SUPERSET, UNIVERSAL SET, POWER SET SPECIAL CONTENT -->
-          <div v-else-if="topics[selectedTopic].type === 'subsuper'">
-            <!-- Step-by-step card ABOVE Try This -->
-            <div v-if="showSubSupGuide" class="guide-box">
-              <h4>📘 YOUR GUIDE</h4>
-              <p v-for="(step, sIdx) in subSupSteps" :key="sIdx">
-                <button @click="toggleSubSupStep(sIdx)" class="step-button">
-                  Step {{ sIdx + 1 }}
-                </button>
-                <span v-if="subSupRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
-              </p>
-            </div>
-            <!-- LET'S TRY Card (Subset Superset) -->
-            <div class="problem-box">
-              <h4>Mastery Quiz 1</h4>
-              <p><strong>Provide a subset of {1, 2, 3, 4}.</strong></p>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <!-- Toggle button for Step-by-step guide (on left) -->
-                <button @click="showSubSupGuide = !showSubSupGuide" class="solve-button">
-                  {{ showSubSupGuide ? "🔽 CLICK TO HIDE" : "📘 CLICK TO SHOW" }}
-                </button>
-                <input
-                  v-model="subSupAnswer"
-                  placeholder="Type your answer here"
-                  class="answer-input"
-                />
-                <!-- CHECK ANSWER button (on right) -->
-                <button @click="checkSubSupAnswer" class="submit-button" :disabled="!subSupAnswer.trim()"> Let's CHECK</button>
-              </div>
-              <div v-if="subSupFeedback" class="result-box">
-                <p>{{ subSupFeedback }}</p>
-              </div>
-              <div v-if="subSupInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
-            </div>
-            <!-- TRY THIS Card (Superset Quiz) -->
-            <div class="problem-box">
-              <h4> Mastery Quiz 2</h4>
-              <p><strong>Which of the following is a superset of {1,2}?</strong></p>
-              <div v-for="(option, idx) in subSupQuiz.options" :key="idx" class="option-box">
-                <label class="option-label">
-                  <span class="option-letter">{{ String.fromCharCode(65 + idx) }}.</span>
-                  <input type="radio" name="subSupQuiz" :value="option" v-model="subSupQuizAnswer" />
-                  <span class="option-text">{{ option }}</span>
-                </label>
-              </div>
-              <div style="display: flex; justify-content: flex-start; gap: 10px; align-items: center; margin-top: 10px;">
-                <button @click="checkSubSupQuiz" class="submit-button" :disabled="!subSupQuizAnswer">Let's CHECK</button>
-                <button @click="universalPageActive = true" class="next-button">➡️ Next</button>
-              </div>
-              <div v-if="subSupQuizFeedback" class="result-box">
-                <p>{{ subSupQuizFeedback }}</p>
-              </div>
-              <div v-if="subSupQuizGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Cardinality - Additional Practice -->
-      <div v-else-if="subsetPageActive" class="content-box">
-        <h4>📘 Cardinality </h4>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>The Cardinality of a set is a measure of a set's size, meaning the number of elements in the set.</strong><br><br>
-            <strong>Example:</strong> S = { x | x is an even number between 20 and 35 }<br>
-            ➡️ S = { 20, 22, 24, 26, 28, 30, 32, 34 }<br>
-            <strong>➡️ Cardinality: |S| = 8<br><br></strong>
-          </p>
-        </div>
-        <!-- Second Cardinality - LET'S TRY-->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>QUESTION 1: What is the cardinality of the set T = { x | x is an odd number between 10 and 20 }?</strong>
-          </p>
-          <!-- Toggle button for Step-by-step guide -->
-          <button @click="showSecondCardGuide = !showSecondCardGuide" class="solve-button">
-            {{ showSecondCardGuide ? "🔽 CLICK TO HIDE " : "📘 CLICK TO SHOW" }}
-          </button>
-          <!-- Step-by-step card -->
-          <div v-if="showSecondCardGuide" class="guide-box">
-            <h4>📘 YOUR GUIDE</h4>
-            <p v-for="(step, sIdx) in secondCardSteps" :key="sIdx">
-              <button @click="toggleSecondCardStep(sIdx)" class="step-button">
-                Step {{ sIdx + 1 }}
-              </button>
-              <span v-if="secondCardRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
-            </p>
-          </div>
-          <input
-            v-model="secondCardAnswer"
-            placeholder="Enter the cardinality of set T"
-            class="answer-input"
-          />
-          <button @click="checkSecondCardAnswer" class="submit-button" :disabled="!secondCardAnswer.trim()"> Let's CHECK</button>
-          <div v-if="secondCardFeedback" class="result-box">
-            <p>{{ secondCardFeedback }}</p>
-          </div>
-          <div v-if="secondCardGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
-          <!-- Third Cardinality - TRY THIS-->
-          <div class="content-box">
-            <h4>Mastery Quiz 2 </h4>
+        <!-- Cardinality - Additional Practice -->
+        <div v-else-if="subsetPageActive" class="content-box">
+          <h4>📘 Cardinality </h4>
+          <div style="background-color:  #eeede9;border: 1px solid #efd56d; padding: 10px; border-radius: 5px;">
             <p>
-              <strong>QUESTION 2: Given the set M = {5, 10, 15, 20, 25}, what is the cardinality of M?</strong>
+              <strong>The Cardinality of a set is a measure of a set's size, meaning the number of elements in the set.</strong><br><br>
+              <strong>Example:</strong> S = { x | x is an even number between 20 and 35 }<br>
+              ➡️ S = { 20, 22, 24, 26, 28, 30, 32, 34 }<br>
+              <strong>➡️ Cardinality: |S| = 8<br><br></strong>
             </p>
- 
+          </div>
+          <!-- Second Cardinality - LET'S TRY-->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>QUESTION 1: What is the cardinality of the set T = { x | x is an odd number between 10 and 20 }?</strong>
+            </p>
+            <!-- Toggle button for Step-by-step guide -->
+            <button @click="showSecondCardGuide = !showSecondCardGuide" class="solve-button">
+              {{ showSecondCardGuide ? "🔽 CLICK TO HIDE " : "📘 CLICK TO SHOW" }}
+            </button>
+            <!-- Step-by-step card -->
+            <div v-if="showSecondCardGuide" class="guide-box">
+              <h4>📘 YOUR GUIDE</h4>
+              <p v-for="(step, sIdx) in secondCardSteps" :key="sIdx">
+                <button @click="toggleSecondCardStep(sIdx)" class="step-button">
+                  Step {{ sIdx + 1 }}
+                </button>
+                <span v-if="secondCardRevealedSteps.includes(sIdx)">➡️ {{ step }}</span>
+              </p>
+            </div>
             <input
-              v-model="thirdCardAnswer"
-              placeholder="Enter the cardinality of set M"
+              v-model="secondCardAnswer"
+              placeholder="Enter the cardinality of set T"
               class="answer-input"
             />
-            <button @click="checkThirdCardAnswer" class="submit-button" :disabled="!thirdCardAnswer.trim()"> Let's CHECK </button>
-            <div v-if="thirdCardFeedback" class="result-box">
-            <p>{{ thirdCardFeedback }}</p>
+            <button @click="checkSecondCardAnswer" class="submit-button" :disabled="!secondCardAnswer.trim()"> LET'S CHECK</button>
+            <div v-if="secondCardFeedback" class="result-box">
+              <p>{{ secondCardFeedback }}</p>
             </div>
-            <div v-if="thirdCardGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            <div v-if="secondCardGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            <!-- Third Cardinality - TRY THIS-->
+            <div class="content-box">
+              <h4>Mastery Quiz 2 </h4>
+              <p>
+                <strong>QUESTION 2: Given the set M = {5, 10, 15, 20, 25}, what is the cardinality of M?</strong>
+              </p>
+              <input
+                v-model="thirdCardAnswer"
+                placeholder="Enter the cardinality of set M"
+                class="answer-input"
+              />
+              <button @click="checkThirdCardAnswer" class="submit-button" :disabled="!thirdCardAnswer.trim()"> LET'S CHECK </button>
+              <div v-if="thirdCardFeedback" class="result-box">
+              <p>{{ thirdCardFeedback }}</p>
+              </div>
+              <div v-if="thirdCardGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            </div>
+            <!-- Back button -->
+            <button @click="subsetPageActive = false" class="next-button">⬅️ Back</button>
+            <!-- Next button -->
+            <button @click="goToUnionPage" class="next-button">➡️ Next</button>
+          </div>
+        </div>
+        <!-- Representation of Sets - Additional Practice -->
+        <div v-else-if="unionPageActive" class="content-box">
+          <h4>📘 Representation of Sets</h4>
+          <p style="font-size: 24px; background-color: #4281bc;border: 1px solid #efd56d; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ totalScore }}/7</p>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d; padding: 10px; border-radius: 5px;">
+            <p>
+              <strong>Sets can be represented in different forms, such as roster form (listing all elements) or set-builder notation (describing elements with a rule).</strong><br><br>
+              <strong>Roster Form:</strong> A way to list all the elements of a set inside curly braces { }.<br>
+              <strong>Set-Builder Form:</strong> A way to describe the elements of a set using a rule or condition.<br><br>
+              <strong>Example:</strong> The set of even numbers between 1 and 5 can be written as:<br>
+              ➡️ Roster form: {2, 4}<br>
+              ➡️ Set-builder notation: {x | x is an even number, 1 ≤ x ≤ 5}<br><br>
+            </p>
+          </div>
+          <!-- Representation - LET'S TRY -->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>QUESTION 1: Represent the set of odd numbers between 1 and 7 in roster form.</strong>
+            </p>
+            <div v-for="(option, optIndex) in representationQuiz.options" :key="optIndex" class="option-box">
+              <label class="option-label">
+                <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                <input type="radio" name="representationQuiz" :value="option" v-model="unionAnswer" />
+                <span class="option-text">{{ option }}</span>
+              </label>
+            </div>
+            <button @click="checkUnionAnswer" class="submit-button" :disabled="!unionAnswer"> LET'S CHECK </button>
+            <div v-if="unionFeedback" class="result-box">
+              <p>{{ unionFeedback }}</p>
+            </div>
+            <div v-if="unionGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            <!-- Representation - TRY THIS (Question 2) -->
+            <div class="content-box">
+              <h4>Mastery Quiz 2</h4>
+              <p>
+                <strong>QUESTION 2: Represent the set of vowels in the English alphabet in set-builder notation.</strong>
+              </p>
+              <div v-for="(option, optIndex) in secondRepresentationQuiz.options" :key="optIndex" class="option-box">
+                <label class="option-label">
+                  <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                  <input type="radio" name="secondRepresentationQuiz" :value="option" v-model="secondUnionAnswer" />
+                  <span class="option-text">{{ option }}</span>
+                </label>
+              </div>
+              <button @click="checkSecondUnionAnswer" class="submit-button" :disabled="!secondUnionAnswer"> LET'S CHECK</button>
+              <div v-if="secondUnionFeedback" class="result-box">
+                <p>{{ secondUnionFeedback }}</p>
+              </div>
+              <div v-if="secondUnionGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            </div>
+            <!-- Representation - TRY THIS (Question 3) -->
+            <div class="content-box">
+              <h4>Mastery Quiz 3</h4>
+              <p>
+                <strong>QUESTION 3: Represent the set of prime numbers less than 10 in roster form.</strong>
+              </p>
+              <div v-for="(option, optIndex) in thirdRepresentationQuiz.options" :key="optIndex" class="option-box">
+                <label class="option-label">
+                  <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                  <input type="radio" name="thirdRepresentationQuiz" :value="option" v-model="thirdUnionAnswer" />
+                  <span class="option-text">{{ option }}</span>
+                </label>
+              </div>
+              <button @click="checkThirdUnionAnswer" class="submit-button" :disabled="!thirdUnionAnswer"> LET'S CHECK </button>
+              <div v-if="thirdUnionFeedback" class="result-box">
+                <p>{{ thirdUnionFeedback }}</p>
+              </div>
+              <div v-if="thirdUnionGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            </div>
+            <!-- Back button -->
+            <button @click="unionPageActive = false; selectedTopic = null" class="next-button">⬅️ Back to Lesson</button>
+          </div>
+        </div>
+        <!-- Empty or Null Set - Additional Practice -->
+        <div v-else-if="singletonPageActive" class="content-box">
+          <h4>📘 Empty or Null Set</h4>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d; padding: 10px; border-radius: 5px;">
+            <p>
+              <strong>An empty set, also called a null set, is a set that contains no elements. It is denoted by {} or ∅.</strong><br><br>
+              <strong>Example:</strong> The set of odd numbers divisible by 2 is an empty set because no odd number is divisible by 2.<br>
+              ➡️ Set: {} or ∅<br>
+              <strong>➡️ Cardinality: |∅| = 0<br><br></strong>
+            </p>
+          </div>
+          <!-- Empty Set - GUESS WHICH -->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>Which of the following is an empty set?</strong>
+            </p>
+            <div v-for="(option, optIndex) in emptySetQuiz.options" :key="optIndex" class="option-box">
+              <label class="option-label">
+                <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                <input type="radio" name="emptySetQuiz" :value="option" v-model="emptySetAnswer" />
+                <span class="option-text">{{ option }}</span>
+              </label>
+            </div>
+            <button @click="checkEmptySetAnswer" class="submit-button" :disabled="!emptySetAnswer"> LET'S CHECK</button>
+            <div v-if="emptySetFeedback" class="result-box">
+              <p>{{ emptySetFeedback }}</p>
+            </div>
+            <div v-if="emptySetGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
           </div>
           <!-- Back button -->
-          <button @click="subsetPageActive = false" class="next-button">⬅️ Back</button>
+          <button @click="singletonPageActive = false" class="next-button">⬅️ Back</button>
           <!-- Next button -->
-          <button @click="goToUnionPage" class="next-button">➡️ Next</button>
+          <button @click="goToSingletonRepresentationPage" class="next-button">➡️ Next</button>
         </div>
-      </div>
-      <!-- Representation of Sets - Additional Practice -->
-      <div v-else-if="unionPageActive" class="content-box">
-        <h4>📘 Representation of Sets</h4>
-        <p style="font-size: 24px; background-color: #ffffe0; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ totalScore }}/7</p>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>Sets can be represented in different forms, such as roster form (listing all elements) or set-builder notation (describing elements with a rule).</strong><br><br>
-            <strong>Roster Form:</strong> A way to list all the elements of a set inside curly braces { }.<br>
-            <strong>Set-Builder Form:</strong> A way to describe the elements of a set using a rule or condition.<br><br>
-            <strong>Example:</strong> The set of even numbers between 1 and 5 can be written as:<br>
-            ➡️ Roster form: {2, 4}<br>
-            ➡️ Set-builder notation: {x | x is an even number, 1 ≤ x ≤ 5}<br><br>
-          </p>
+        <!-- Finite Set - Additional Practice -->
+        <div v-else-if="singletonRepresentationPageActive" class="content-box">
+          <h4>📘 FINITE SETS</h4>
+          <p style="font-size: 24px; background-color: #4281bc;border: 1px solid #efd56d; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ singletonSectionScore }}/5</p>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d; padding: 10px; border-radius: 5px;">
+            <p>
+              <strong>FINITE SET is a set which contains a definite number of elements.</strong><br><br>
+              <strong>Example: Let D = "set of days of the week.":</strong><br>
+              <strong>➡️ D = {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}</strong><br><br>
+            </p>
+          </div>
+          <!-- Finite Set - LET'S TRY -->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>QUESTION 1: Write the set of the 4 seasons in a year.</strong>
+            </p>
+            <input
+              v-model="singletonRepresentationAnswer"
+              placeholder="Type your answer here"
+              class="answer-input"
+            />
+            <button @click="checkSingletonRepresentationAnswer" class="submit-button" :disabled="!singletonRepresentationAnswer.trim()">LET'S CHECK </button>
+            <div v-if="singletonRepresentationFeedback" class="result-box">
+              <p>{{ singletonRepresentationFeedback }}</p>
+            </div>
+            <div v-if="finiteInputGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
+            <!-- Finite Set - TRY THIS -->
+            <div class="content-box">
+              <h4>Mastery Quiz 2</h4>
+              <p>
+                <strong>QUESTION 2: Which of the following is a finite set?</strong>
+              </p>
+              <div v-for="(option, optIndex) in singletonSecondRepresentationQuiz.options" :key="optIndex" class="option-box">
+                <label class="option-label">
+                  <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                  <input type="radio" name="singletonSecondRepresentationQuiz" :value="option" v-model="singletonSecondRepresentationAnswer" />
+                  <span class="option-text">{{ option }}</span>
+                </label>
+              </div>
+              <button @click="checkSingletonSecondRepresentationAnswer" class="submit-button" :disabled="!singletonSecondRepresentationAnswer"> LET'S CHECK </button>
+              <div v-if="singletonSecondRepresentationFeedback" class="result-box">
+                <p>{{ singletonSecondRepresentationFeedback }}</p>
+              </div>
+              <div v-if="finiteQuizGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
+            </div>
+            <!-- Back button -->
+            <button @click="singletonPageActive = true; singletonRepresentationPageActive = false" class="next-button">⬅️ Back</button>
+            <!-- Next button -->
+            <button @click="singletonRepresentationPageActive = false; selectedTopic = null" class="next-button">⬅️ Back to Lesson</button>
+          </div>
         </div>
-        <!-- Representation - LET'S TRY -->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>QUESTION 1: Represent the set of odd numbers between 1 and 7 in roster form.</strong>
-          </p>
-          <div v-for="(option, optIndex) in representationQuiz.options" :key="optIndex" class="option-box">
-            <label class="option-label">
-              <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-              <input type="radio" name="representationQuiz" :value="option" v-model="unionAnswer" />
-              <span class="option-text">{{ option }}</span>
-            </label>
+        <!-- Equal Sets - Additional Practice -->
+        <div v-else-if="infinitePageActive" class="content-box">
+          <h4>📘 Equal Sets</h4>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d;padding: 10px; border-radius: 5px;">
+            <p>
+              <strong>Two sets are equal if they contain exactly the same elements, regardless of the order.</strong><br><br>
+              <strong>Example:</strong> A = {1, 2, 3} and B = {3, 1, 2} are equal sets since they have the same elements.<br><br>
+            </p>
           </div>
-          <button @click="checkUnionAnswer" class="submit-button" :disabled="!unionAnswer"> Let's CHECK </button>
-          <div v-if="unionFeedback" class="result-box">
-            <p>{{ unionFeedback }}</p>
+          <!-- Equal Sets - LET'S TRY -->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>Are the sets {1, 2, 3} and {3, 2, 1} equal or unequal?</strong>
+            </p>
+            <input
+              v-model="equalInputAnswer"
+              placeholder="Type 'equal' or 'unequal'"
+              class="answer-input"
+            />
+            <button @click="checkEqualInputAnswer" class="submit-button" :disabled="!equalInputAnswer.trim()"> LET'S CHECK </button>
+            <div v-if="equalInputFeedback" class="result-box">
+              <p>{{ equalInputFeedback }}</p>
+            </div>
+            <div v-if="equalInputGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
           </div>
-          <div v-if="unionGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
-          <!-- Representation - TRY THIS (Question 2) -->
+          <!-- Equal Sets - TRY THIS -->
           <div class="content-box">
             <h4>Mastery Quiz 2</h4>
             <p>
-              <strong>QUESTION 2: Represent the set of vowels in the English alphabet in set-builder notation.</strong>
+              <strong>Which of the following pairs of sets are equal?</strong>
             </p>
-            <div v-for="(option, optIndex) in secondRepresentationQuiz.options" :key="optIndex" class="option-box">
+            <div v-for="(option, optIndex) in equalQuiz.options" :key="optIndex" class="option-box">
               <label class="option-label">
                 <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <input type="radio" name="secondRepresentationQuiz" :value="option" v-model="secondUnionAnswer" />
+                <input type="radio" name="equalQuiz" :value="option" v-model="equalAnswer" />
                 <span class="option-text">{{ option }}</span>
               </label>
             </div>
-            <button @click="checkSecondUnionAnswer" class="submit-button" :disabled="!secondUnionAnswer"> Let's CHECK</button>
-            <div v-if="secondUnionFeedback" class="result-box">
-              <p>{{ secondUnionFeedback }}</p>
+            <button @click="checkEqualAnswer" class="submit-button" :disabled="!equalAnswer"> LET'S CHECK</button>
+            <div v-if="equalFeedback" class="result-box">
+              <p>{{ equalFeedback }}</p>
             </div>
-            <div v-if="secondUnionGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
-          </div>
-          <!-- Representation - TRY THIS (Question 3) -->
-          <div class="content-box">
-            <h4>Mastery Quiz 3</h4>
-            <p>
-              <strong>QUESTION 3: Represent the set of prime numbers less than 10 in roster form.</strong>
-            </p>
-            <div v-for="(option, optIndex) in thirdRepresentationQuiz.options" :key="optIndex" class="option-box">
-              <label class="option-label">
-                <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <input type="radio" name="thirdRepresentationQuiz" :value="option" v-model="thirdUnionAnswer" />
-                <span class="option-text">{{ option }}</span>
-              </label>
-            </div>
-            <button @click="checkThirdUnionAnswer" class="submit-button" :disabled="!thirdUnionAnswer"> Let's CHECK </button>
-            <div v-if="thirdUnionFeedback" class="result-box">
-              <p>{{ thirdUnionFeedback }}</p>
-            </div>
-            <div v-if="thirdUnionGoodJob" class="good-job-message">Good job, you have {{ totalScore }} points</div>
+            <div v-if="equalQuizGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
           </div>
           <!-- Back button -->
-          <button @click="unionPageActive = false; selectedTopic = null" class="next-button">⬅️ Back to Lesson</button>
-        </div>
-      </div>
-      <!-- Empty or Null Set - Additional Practice -->
-      <div v-else-if="singletonPageActive" class="content-box">
-        <h4>📘 Empty or Null Set</h4>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>An empty set, also called a null set, is a set that contains no elements. It is denoted by {} or ∅.</strong><br><br>
-            <strong>Example:</strong> The set of odd numbers divisible by 2 is an empty set because no odd number is divisible by 2.<br>
-            ➡️ Set: {} or ∅<br>
-            <strong>➡️ Cardinality: |∅| = 0<br><br></strong>
-          </p>
-        </div>
-        <!-- Empty Set - GUESS WHICH -->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>Which of the following is an empty set?</strong>
-          </p>
-          <div v-for="(option, optIndex) in emptySetQuiz.options" :key="optIndex" class="option-box">
-            <label class="option-label">
-              <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-              <input type="radio" name="emptySetQuiz" :value="option" v-model="emptySetAnswer" />
-              <span class="option-text">{{ option }}</span>
-            </label>
-          </div>
-          <button @click="checkEmptySetAnswer" class="submit-button" :disabled="!emptySetAnswer"> Let's CHECK</button>
-          <div v-if="emptySetFeedback" class="result-box">
-            <p>{{ emptySetFeedback }}</p>
-          </div>
-          <div v-if="emptySetGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
-        </div>
-        <!-- Back button -->
-        <button @click="singletonPageActive = false" class="next-button">⬅️ Back</button>
-        <!-- Next button -->
-        <button @click="goToSingletonRepresentationPage" class="next-button">➡️ Next</button>
-      </div>
-      <!-- Finite Set - Additional Practice -->
-      <div v-else-if="singletonRepresentationPageActive" class="content-box">
-        <h4>📘 FINITE SETS</h4>
-        <p style="font-size: 24px; background-color: #ffffe0; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ singletonSectionScore }}/5</p>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>FINITE SET is a set which contains a definite number of elements.</strong><br><br>
-            <strong>Example: Let D = “set of days of the week.”:</strong><br>
-            <strong>➡️ D = {Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}</strong><br><br>
-          </p>
-        </div>
-        <!-- Finite Set - LET'S TRY -->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>QUESTION 1: Write the set of the 4 seasons in a year.</strong>
-          </p>
-          <input
-            v-model="singletonRepresentationAnswer"
-            placeholder="Type your answer here"
-            class="answer-input"
-          />
-          <button @click="checkSingletonRepresentationAnswer" class="submit-button" :disabled="!singletonRepresentationAnswer.trim()">Let's CHECK </button>
-          <div v-if="singletonRepresentationFeedback" class="result-box">
-            <p>{{ singletonRepresentationFeedback }}</p>
-          </div>
-          <div v-if="finiteInputGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
-          <!-- Finite Set - TRY THIS -->
-          <div class="content-box">
-            <h4>Mastery Quiz 2</h4>
-            <p>
-              <strong>QUESTION 2: Which of the following is a finite set?</strong>
-            </p>
-            <div v-for="(option, optIndex) in singletonSecondRepresentationQuiz.options" :key="optIndex" class="option-box">
-              <label class="option-label">
-                <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <input type="radio" name="singletonSecondRepresentationQuiz" :value="option" v-model="singletonSecondRepresentationAnswer" />
-                <span class="option-text">{{ option }}</span>
-              </label>
-            </div>
-            <button @click="checkSingletonSecondRepresentationAnswer" class="submit-button" :disabled="!singletonSecondRepresentationAnswer"> Let's CHECK </button>
-            <div v-if="singletonSecondRepresentationFeedback" class="result-box">
-              <p>{{ singletonSecondRepresentationFeedback }}</p>
-            </div>
-            <div v-if="finiteQuizGoodJob" class="good-job-message">Good job, you have {{ singletonSectionScore }} points</div>
-          </div>
-          <!-- Back button -->
-          <button @click="singletonPageActive = true; singletonRepresentationPageActive = false" class="next-button">⬅️ Back</button>
+          <button @click="infinitePageActive = false" class="next-button">⬅️ Back</button>
           <!-- Next button -->
-          <button @click="singletonRepresentationPageActive = false; selectedTopic = null" class="next-button">⬅️ Back to Lesson</button>
+          <button @click="goToInfiniteRepresentationPage" class="next-button">➡️ Next</button>
         </div>
-      </div>
-      <!-- Equal Sets - Additional Practice -->
-      <div v-else-if="infinitePageActive" class="content-box">
-        <h4>📘 Equal Sets</h4>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>Two sets are equal if they contain exactly the same elements, regardless of the order.</strong><br><br>
-            <strong>Example:</strong> A = {1, 2, 3} and B = {3, 1, 2} are equal sets since they have the same elements.<br><br>
-          </p>
-        </div>
-        <!-- Equal Sets - LET'S TRY -->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>Are the sets {1, 2, 3} and {3, 2, 1} equal or unequal?</strong>
-          </p>
-          <input
-            v-model="equalInputAnswer"
-            placeholder="Type 'equal' or 'unequal'"
-            class="answer-input"
-          />
-          <button @click="checkEqualInputAnswer" class="submit-button" :disabled="!equalInputAnswer.trim()"> Let's CHECK </button>
-          <div v-if="equalInputFeedback" class="result-box">
-            <p>{{ equalInputFeedback }}</p>
-          </div>
-          <div v-if="equalInputGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
-        </div>
-        <!-- Equal Sets - TRY THIS -->
-        <div class="content-box">
-          <h4>Mastery Quiz 2</h4>
-          <p>
-            <strong>Which of the following pairs of sets are equal?</strong>
-          </p>
-          <div v-for="(option, optIndex) in equalQuiz.options" :key="optIndex" class="option-box">
-            <label class="option-label">
-              <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-              <input type="radio" name="equalQuiz" :value="option" v-model="equalAnswer" />
-              <span class="option-text">{{ option }}</span>
-            </label>
-          </div>
-          <button @click="checkEqualAnswer" class="submit-button" :disabled="!equalAnswer"> Let's CHECK</button>
-          <div v-if="equalFeedback" class="result-box">
-            <p>{{ equalFeedback }}</p>
-          </div>
-          <div v-if="equalQuizGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
-        </div>
-        <!-- Back button -->
-        <button @click="infinitePageActive = false" class="next-button">⬅️ Back</button>
-        <!-- Next button -->
-        <button @click="goToInfiniteRepresentationPage" class="next-button">➡️ Next</button>
-      </div>
-      <!-- Unequal Sets - Additional Practice -->
-      <div v-else-if="infiniteRepresentationPageActive" class="content-box">
-        <h4>📘 Unequal Sets</h4>
-        <p style="font-size: 24px; background-color: #ffffe0; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ infiniteSectionScore }}/6</p>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>Two sets are unequal if they do not contain exactly the same elements.</strong><br><br>
-            <strong>Example:</strong> A = {1, 2} and B = {1, 2, 3} are unequal sets since B has an extra element.<br><br>
-          </p>
-        </div>
-        <!-- Unequal Sets - LET'S TRY -->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>Are the sets {a, b} and {b, a, c} equal or unequal?</strong>
-          </p>
-          <input
-            v-model="unequalAnswer"
-            placeholder="Type 'equal' or 'unequal'"
-            class="answer-input"
-          />
-          <button @click="checkUnequalAnswer" class="submit-button" :disabled="!unequalAnswer.trim()"> Let's CHECK </button>
-          <div v-if="unequalFeedback" class="result-box">
-            <p>{{ unequalFeedback }}</p>
-          </div>
-          <div v-if="unequalInputGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
-          <!-- Unequal Sets - TRY THIS -->
-          <div class="content-box">
-            <h4>Mastery Quiz 2</h4>
+        <!-- Unequal Sets - Additional Practice -->
+        <div v-else-if="infiniteRepresentationPageActive" class="content-box">
+          <h4>📘 Unequal Sets</h4>
+          <p style="font-size: 24px; background-color: #4281bc;border: 1px solid #efd56d; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ infiniteSectionScore }}/6</p>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d; padding: 10px; border-radius: 5px;">
             <p>
-              <strong>Which of the following pairs represents unequal sets?</strong>
+              <strong>Two sets are unequal if they do not contain exactly the same elements.</strong><br><br>
+              <strong>Example:</strong> A = {1, 2} and B = {1, 2, 3} are unequal sets since B has an extra element.<br><br>
             </p>
-            <div v-for="(option, optIndex) in unequalQuiz.options" :key="optIndex" class="option-box">
-              <label class="option-label">
-                <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <input type="radio" name="unequalQuiz" :value="option" v-model="unequalQuizAnswer" />
-                <span class="option-text">{{ option }}</span>
-              </label>
-            </div>
-            <button @click="checkUnequalQuiz" class="submit-button" :disabled="!unequalQuizAnswer"> Let's CHECK </button>
-            <div v-if="unequalQuizFeedback" class="result-box">
-              <p>{{ unequalQuizFeedback }}</p>
-            </div>
-            <div v-if="unequalQuizGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
           </div>
-          <!-- Back button -->
-          <button @click="infiniteRepresentationPageActive = false" class="next-button">⬅️ Back</button>
-          <!-- Next button -->
-          <button @click="infiniteRepresentationPageActive = false; selectedTopic = null" class="next-button">⬅️ Back to Lesson</button>
-        </div>
-      </div>
-      <!-- Universal Set - Additional Practice -->
-      <div v-else-if="universalPageActive" class="content-box">
-        <h4>📘 Universal Set</h4>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>The Universal Set is the largest set containing all elements relevant to a problem.</strong><br><br>
-            <strong>Example:</strong> For numbers 1 to 5, U = {1, 2, 3, 4, 5}<br><br>
-          </p>
-        </div>
-        <!-- Universal - LET'S TRY-->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>QUESTION 1: What is the universal set for the days of the week?</strong>
-          </p>
-          <input
-            v-model="universalAnswer"
-            placeholder="Type your answer here"
-            class="answer-input"
-          />
-          <button @click="checkUniversalAnswer" class="submit-button" :disabled="!universalAnswer.trim()"> Let's CHECK </button>
-          <div v-if="universalFeedback" class="result-box">
-            <p>{{ universalFeedback }}</p>
-          </div>
-          <div v-if="universalInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
-          <!-- Universal - TRY THIS-->
+          <!-- Unequal Sets - LET'S TRY -->
           <div class="content-box">
-            <h4>Mastery Quiz 2 </h4>
+            <h4>Mastery Quiz 1</h4>
             <p>
-              <strong>QUESTION 2: In the context of whole numbers from 0 to 9, what is the universal set?</strong>
+              <strong>Are the sets {a, b} and {b, a, c} equal or unequal?</strong>
             </p>
- 
-            <div v-for="(option, optIndex) in universalQuiz.options" :key="optIndex" class="option-box">
-              <label class="option-label">
-                <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
-                <input type="radio" name="universalQuiz" :value="option" v-model="universalQuizAnswer" />
-                <span class="option-text">{{ option }}</span>
-              </label>
+            <input
+              v-model="unequalAnswer"
+              placeholder="Type 'equal' or 'unequal'"
+              class="answer-input"
+            />
+            <button @click="checkUnequalAnswer" class="submit-button" :disabled="!unequalAnswer.trim()"> LET'S CHECK </button>
+            <div v-if="unequalFeedback" class="result-box">
+              <p>{{ unequalFeedback }}</p>
             </div>
-            <button @click="checkUniversalQuiz" class="submit-button" :disabled="!universalQuizAnswer"> Let's CHECK </button>
-            <div v-if="universalQuizFeedback" class="result-box">
-            <p>{{ universalQuizFeedback }}</p>
+            <div v-if="unequalInputGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
+            <!-- Unequal Sets - TRY THIS -->
+            <div class="content-box">
+              <h4>Mastery Quiz 2</h4>
+              <p>
+                <strong>Which of the following pairs represents unequal sets?</strong>
+              </p>
+              <div v-for="(option, optIndex) in unequalQuiz.options" :key="optIndex" class="option-box">
+                <label class="option-label">
+                  <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                  <input type="radio" name="unequalQuiz" :value="option" v-model="unequalQuizAnswer" />
+                  <span class="option-text">{{ option }}</span>
+                </label>
+              </div>
+              <button @click="checkUnequalQuiz" class="submit-button" :disabled="!unequalQuizAnswer"> LET'S CHECK </button>
+              <div v-if="unequalQuizFeedback" class="result-box">
+                <p>{{ unequalQuizFeedback }}</p>
+              </div>
+              <div v-if="unequalQuizGoodJob" class="good-job-message">Good job, you got {{ infiniteSectionScore }} points</div>
             </div>
-            <div v-if="universalQuizGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+            <!-- Back button -->
+            <button @click="infiniteRepresentationPageActive = false" class="next-button">⬅️ Back</button>
+            <!-- Next button -->
+            <button @click="infiniteRepresentationPageActive = false; selectedTopic = null" class="next-button">⬅️ Back to Lesson</button>
           </div>
-          <!-- Back button -->
-          <button @click="universalPageActive = false" class="next-button">⬅️ Back</button>
-          <!-- Next button -->
-          <button @click="goToPowerSetPage" class="next-button">➡️ Next</button>
         </div>
-      </div>
-      <!-- Power Set - Additional Practice -->
-      <div v-else-if="powerSetPageActive" class="content-box">
-        <h4>📘 Power Set</h4>
-        <p style="font-size: 24px; background-color: #ffffe0; padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ subSupSectionScore }}/6</p>
-        <div style="background-color: #ffffe0; padding: 10px; border-radius: 5px;">
-          <p>
-            <strong>The Power Set of S is the collection of all subsets of S. |P(S)| = 2^|S|.</strong><br><br>
-            <strong>Example:</strong> For S = {a, b}, P(S) = { ∅, {a}, {b}, {a,b} }<br><br>
-          </p>
-        </div>
-        <!-- Power Set - LET'S TRY -->
-        <div class="content-box">
-          <h4>Mastery Quiz 1</h4>
-          <p>
-            <strong>QUESTION 1: What is the power set of ∅ (empty set)?</strong>
-          </p>
-          <input
-            v-model="powerSetAnswer"
-            placeholder="Type your answer here"
-            class="answer-input"
-          />
-          <button @click="checkPowerSetAnswer" class="submit-button" :disabled="!powerSetAnswer.trim()"> Let's CHECK </button>
-          <div v-if="powerSetFeedback" class="result-box">
-            <p>{{ powerSetFeedback }}</p>
+        <!-- Universal Set - Additional Practice -->
+        <div v-else-if="universalPageActive" class="content-box">
+          <h4>📘 Universal Set</h4>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d;  padding: 10px; border-radius: 5px;">
+            <p>
+              <strong>The Universal Set is the largest set containing all elements relevant to a problem.</strong><br><br>
+              <strong>Example:</strong> For numbers 1 to 5, U = {1, 2, 3, 4, 5}<br><br>
+            </p>
           </div>
-          <div v-if="powerSetInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+          <!-- Universal - LET'S TRY-->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>QUESTION 1: What is the universal set for the days of the week?</strong>
+            </p>
+            <input
+              v-model="universalAnswer"
+              placeholder="Type your answer here"
+              class="answer-input"
+            />
+            <button @click="checkUniversalAnswer" class="submit-button" :disabled="!universalAnswer.trim()"> LET'S CHECK </button>
+            <div v-if="universalFeedback" class="result-box">
+              <p>{{ universalFeedback }}</p>
+            </div>
+            <div v-if="universalInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+            <!-- Universal - TRY THIS-->
+            <div class="content-box">
+              <h4>Mastery Quiz 2 </h4>
+              <p>
+                <strong>QUESTION 2: In the context of whole numbers from 0 to 9, what is the universal set?</strong>
+              </p>
+              <div v-for="(option, optIndex) in universalQuiz.options" :key="optIndex" class="option-box">
+                <label class="option-label">
+                  <span class="option-letter">{{ String.fromCharCode(65 + optIndex) }}.</span>
+                  <input type="radio" name="universalQuiz" :value="option" v-model="universalQuizAnswer" />
+                  <span class="option-text">{{ option }}</span>
+                </label>
+              </div>
+              <button @click="checkUniversalQuiz" class="submit-button" :disabled="!universalQuizAnswer"> LET'S CHECK </button>
+              <div v-if="universalQuizFeedback" class="result-box">
+              <p>{{ universalQuizFeedback }}</p>
+              </div>
+              <div v-if="universalQuizGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+            </div>
+            <!-- Back button -->
+            <button @click="universalPageActive = false" class="next-button">⬅️ Back</button>
+            <!-- Next button -->
+            <button @click="goToPowerSetPage" class="next-button">➡️ Next</button>
+          </div>
+        </div>
+        <!-- Power Set - Additional Practice -->
+        <div v-else-if="powerSetPageActive" class="content-box">
+          <h4>📘 Power Set</h4>
+          <p style="font-size: 24px; background-color: #4281bc;border: 1px solid #efd56d;padding: 10px; border-radius: 5px; font-weight: bold;">Your Score Total: {{ subSupSectionScore }}/6</p>
+          <div style="background-color: #eeede9;border: 1px solid #efd56d;  padding: 10px; border-radius: 5px;">
+            <p>
+              <strong>The Power Set of S is the collection of all subsets of S. |P(S)| = 2^|S|.</strong><br><br>
+              <strong>Example:</strong> For S = {a, b}, P(S) = { ∅, {a}, {b}, {a,b} }<br><br>
+            </p>
+          </div>
+          <!-- Power Set - LET'S TRY -->
+          <div class="content-box">
+            <h4>Mastery Quiz 1</h4>
+            <p>
+              <strong>QUESTION 1: What is the power set of ∅ (empty set)?</strong>
+            </p>
+            <input
+              v-model="powerSetAnswer"
+              placeholder="Type your answer here"
+              class="answer-input"
+            />
+            <button @click="checkPowerSetAnswer" class="submit-button" :disabled="!powerSetAnswer.trim()"> LET'S CHECK </button>
+            <div v-if="powerSetFeedback" class="result-box">
+              <p>{{ powerSetFeedback }}</p>
+            </div>
+            <div v-if="powerSetInputGoodJob" class="good-job-message">Good job, you got {{ subSupSectionScore }} points</div>
+          </div>
           <!-- Power Set - TRY THIS -->
           <div class="content-box">
             <h4>Mastery Quiz 2</h4>
@@ -871,7 +1671,7 @@
                 <span class="option-text">{{ option }}</span>
               </label>
             </div>
-            <button @click="checkPowerSetQuiz" class="submit-button" :disabled="!powerSetQuizAnswer"> Let's CHECK </button>
+            <button @click="checkPowerSetQuiz" class="submit-button" :disabled="!powerSetQuizAnswer"> LET'S CHECK </button>
             <div v-if="powerSetQuizFeedback" class="result-box">
               <p>{{ powerSetQuizFeedback }}</p>
             </div>
@@ -886,6 +1686,7 @@
     </div>
   </div>
 </template>
+
 <script>
 export default {
   name: "LessonTopicThree",
@@ -895,16 +1696,18 @@ export default {
       showPreTestResult: false,
       score: 0,
       userAnswers: [],
+      // NEW: Flag to track if pre-test was taken in this session
+      hasTakenPreTestInSession: false,
       preTestQuestions: [
-        { question: "Which of the following is a subset of {1, 2, 3}?", options: ["{1,2}", "{4}", "{1,4}", "{2,3,4}"], answer: "{1,2}" },
+        { question: "What is a set?", options: ["A collection of numbers only", "A collection of objects, named using capital letters", "A single object", "A mathematical operation"], answer: "A collection of objects, named using capital letters" },
         { question: "What is a singleton set?", options: ["A set with one element", "A set with two elements", "An empty set", "An infinite set"], answer: "A set with one element" },
-        { question: "Which of the following is an infinite set?", options: ["{1, 2, 3}", "{x | x is a positive integer}", "{a, b}", "{Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday}"], answer: "{x | x is a positive integer}" },
+        { question: "Which symbol is used to represent a set?", options: ["( )", "[ ]", "{ }", "< >"], answer: "{ }" },
         { question: "Which of the following is an empty set?", options: ["{}", "{1}", "{a,b}", "{1,2,3}"], answer: "{}" },
         { question: "What is the cardinality of the set {p, q, r}?", options: ["1", "2", "3", "4"], answer: "3" }
       ],
       selectedTopic: null,
-      showSolution: Array(2).fill({ main: false, alt: false }),
-      revealedSteps: Array(2).fill({ main: [], alt: [] }),
+      showSolution: Array(5).fill({ main: false, alt: false }),
+      revealedSteps: Array(5).fill({ main: [], alt: [] }),
       viewedTopics: new Set(),
       subsetAnswer: "",
       subsetFeedback: "",
@@ -1161,28 +1964,83 @@ export default {
       },
       powerSetQuizAnswer: "",
       powerSetQuizFeedback: "",
+      // NEW: Set Symbols Quiz Data - UPDATED QUESTIONS
+      showSetSymbols: false,
+      showSetSymbolsError: false,
+      setSymbolsAnswers: [],
+      setSymbolsQuiz: [
+        {
+          question: "which of these is the symbol of set?",
+          options: ["U", "A ∪ B", "{ }"],
+          answer: "{ }",
+          answered: false,
+          correct: false
+        },
+        {
+          question: "Which symbol represents the universal set?",
+          options: ["∅", "U", "∈"],
+          answer: "U",
+          answered: false,
+          correct: false
+        },
+        {
+          question: "What is the symbol of Null or empty set?",
+          options: ["U", "∅", "∈"],
+          answer: "∅",
+          answered: false,
+          correct: false
+        },
+        {
+          question: "What is the symbol of Set A intersection set B?",
+          options: ["A ∪ B", "A ∩ B", "A ⊆ B"],
+          answer: "A ∩ B",
+          answered: false,
+          correct: false
+        },
+        {
+          question: "What is the symbol of Set A is a subset of set B?",
+          options: ["A ∪ B", "A ∩ B", "A ⊆ B"],
+          answer: "A ⊆ B",
+          answered: false,
+          correct: false
+        }
+      ],
+      // NEW: Set Symbols Score
+      setSymbolsScore: 0,
       topics: [
+        {
+          title: "Set Theory",
+          type: "intro",
+          content: "<div style=\"background-color: #eeede9; padding: 10px; border-radius: 5px;border: 1px solid #efd56d;\"><strong>Set theory</strong> is the branch of mathematical logic that studies sets, which are collections of objects. It is a foundational system for modern mathematics, and it forms the basis of other fields such as algebra, topology, and analysis. Sets can be finite or infinite and are denoted by capital letters like A, B, or U.</div>"
+        },
         {
           title: "Sets, Cardinality, and Representation",
           type: "sets",
-          content: "<div style=\"background-color: #ffffe0; padding: 10px; border-radius: 5px;\">A <strong>set</strong> is a well-defined collection of objects, named using capital letters. The items in a set are called elements or members.<br><br><strong> ➡️ Example:</strong> A set of even numbers E = {0, 2, 4, 6, 8, 10}.</div>"
+          content: "<div style=\"background-color: #eeede9; padding: 10px; border-radius: 5px;border: 1px solid #efd56d;\">A <strong>set</strong> is a well-defined collection of objects, named using capital letters. The items in a set are called elements or members.<br><br><strong> ➡️ Example:</strong> A set of even numbers E = {0, 2, 4, 6, 8, 10}.</div>"
         },
         {
           title: "Singleton Set, Empty Set, and Finite Set",
           type: "singleton",
-          content: "<div style=\"background-color: #ffffe0; padding: 10px; border-radius: 5px;\">A <strong>Singleton Set</strong> is a set with exactly one element, e.g., {3}.<br><br> ➡️ Example: The set of odd numbers divisible by 2 is {} .</div>"
+          content: "<div style=\"background-color: #eeede9; padding: 10px; border-radius: 5px;border: 1px solid #efd56d;\">A <strong>Singleton Set</strong> is a set with exactly one element, e.g., {3}.<br><br> ➡️ Example: The set of odd numbers divisible by 2 is {} .</div>"
         },
         {
           title: "Infinite Set, Equal Set, and Unequal Set",
           type: "infinite",
-          content: "<div style=\"background-color: #ffffe0; padding: 10px; border-radius: 5px;\">An <strong>Infinite Set</strong> is a set that contains an unlimited number of elements,<br><br> ➡️ Example: the set of all natural numbers N = {1, 2, 3, ...}.</div>"
+          content: "<div style=\"background-color: #eeede9; padding: 10px; border-radius: 5px;border: 1px solid #efd56d;\">An <strong>Infinite Set</strong> is a set that contains an unlimited number of elements,<br><br> ➡️ Example: the set of all natural numbers N = {1, 2, 3, ...}.</div>"
         },
         {
-          title: "Subset & Superset, Universal Set, and Power Set",
+          title: "Subset & Superset, Universal Set, & Power Set",
           type: "subsuper",
-          content: "<div style=\"background-color: #ffffe0; padding: 10px; border-radius: 5px;\">A <strong>Subset (⊆)</strong> is a set A where every element of A is also in B. A <strong>Superset (⊇)</strong> is the reverse.<br><br> ➡️ Example: {1,2} ⊆ {1,2,3}, {1,2,3} ⊇ {1,2}.</div>"
+          content: "<div style=\"background-color: #eeede9; padding: 10px; border-radius: 5px;border: 1px solid #efd56d;\">A <strong>Subset (⊆)</strong> is a set A where every element of A is also in B. A <strong>Superset (⊇)</strong> is the reverse.<br><br> ➡️ Example: {1,2} ⊆ {1,2,3}, {1,2,3} ⊇ {1,2}.</div>"
         }
-      ]
+      ],
+      // Added missing initializations for scores
+      subSupInputScore: 0,
+      subSupQuizScore: 0,
+      universalInputScore: 0,
+      universalQuizScore: 0,
+      powerSetInputScore: 0,
+      powerSetQuizScore: 0
     };
   },
   computed: {
@@ -1191,7 +2049,7 @@ export default {
              this.userAnswers.every(answer => answer !== undefined && answer !== '');
     },
     totalScore() {
-      return this.subsetScore + this.subsetQuizScore + this.secondCardScore + this.thirdCardScore + this.unionScore + this.secondUnionScore + this.thirdUnionScore + this.singletonInputScore + this.singletonQuizScore + this.emptySetScore + this.finiteInputScore + this.finiteQuizScore + this.infiniteSectionScore + this.subSupSectionScore;
+      return this.subsetScore + this.subsetQuizScore + this.secondCardScore + this.thirdCardScore + this.unionScore + this.secondUnionScore + this.thirdUnionScore + this.singletonInputScore + this.singletonQuizScore + this.emptySetScore + this.finiteInputScore + this.finiteQuizScore + this.infiniteSectionScore + this.subSupSectionScore + this.setSymbolsScore;
     },
     singletonSectionScore() {
       return this.singletonInputScore + this.singletonQuizScore + this.emptySetScore + this.finiteInputScore + this.finiteQuizScore;
@@ -1204,24 +2062,82 @@ export default {
     },
     unequalScore() {
       return this.unequalInputScore + this.unequalQuizScore;
+    },
+    // NEW: Computed property for completed quiz count
+    completedSetSymbolsQuizCount() {
+      return this.setSymbolsQuiz.filter(q => q.answered).length;
     }
   },
   created() {
     // Shuffle questions on load
     this.preTestQuestions = this.shuffleArray(this.preTestQuestions);
+    // Initialize set symbols answers array
+    this.setSymbolsAnswers = new Array(this.setSymbolsQuiz.length).fill('');
+    
+    // ✅ NEW: Check if user has already taken pre-test in this session
+    this.checkPreTestSessionStatus();
   },
   methods: {
-    shuffleArray(array) {
-      return array.sort(() => Math.random() - 0.5);
+    // ✅ NEW: Check sessionStorage for pre-test completion
+    checkPreTestSessionStatus() {
+      const hasTakenPreTest = sessionStorage.getItem('setTheory_preTest_completed');
+      if (hasTakenPreTest === 'true') {
+        this.hasTakenPreTestInSession = true;
+      }
     },
+    
+    // ✅ UPDATED: Save Pre-Test Score to localStorage AND sessionStorage
     submitPreTest() {
       this.score = this.preTestQuestions.reduce((acc, q, i) => acc + (this.userAnswers[i] === q.answer ? 1 : 0), 0);
       this.showPreTestResult = true;
+      
+      // Load existing assessment scores from localStorage
+      let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
+      // Save/update pre-test score
+      existingAssessments['preTest-setTheory'] = this.score.toString();
+      localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
+    },
+    
+    // ✅ NEW: Complete pre-test and mark as taken in session
+    completePreTest() {
+      // Mark pre-test as completed in sessionStorage
+      sessionStorage.setItem('setTheory_preTest_completed', 'true');
+      this.hasTakenPreTestInSession = true;
+      this.preTestCompleted = true;
+      this.showPreTestResult = false;
+    },
+    
+    // ✅ NEW: Proceed directly to lesson if pre-test already taken
+    proceedToLesson() {
+      this.preTestCompleted = true;
+    },
+    
+    goToNextLesson() {
+      // Navigate to the "Sets, Cardinality, and Representation" topic (index 1)
+      this.selectedTopic = 1;
+      // Reset any active page states
+      this.subsetPageActive = false;
+      this.unionPageActive = false;
+      this.singletonPageActive = false;
+      this.singletonRepresentationPageActive = false;
+      this.infinitePageActive = false;
+      this.infiniteRepresentationPageActive = false;
+      this.universalPageActive = false;
+      this.powerSetPageActive = false;
+      // Reset the Sets section scores and good job messages
+      this.resetSetsScores();
+      this.resetSetsGoodJobs();
+      // Reset set symbols visibility when navigating
+      this.showSetSymbols = false;
+      this.showSetSymbolsError = false;
+    },
+    shuffleArray(array) {
+      return array.sort(() => Math.random() - 0.5);
     },
     toggleTopic(index) {
       this.selectedTopic = this.selectedTopic === index ? null : index;
-      this.showSolution = this.showSolution.map(() => ({ main: false, alt: false }));
-      this.revealedSteps = this.revealedSteps.map(() => ({ main: [], alt: [] }));
+      this.showSolution = Array(this.topics.length).fill({ main: false, alt: false });
+      this.revealedSteps = Array(this.topics.length).fill({ main: [], alt: [] });
       this.viewedTopics.add(index);
       this.subsetRevealedSteps = [];
       this.showSubsetGuide = false;
@@ -1238,22 +2154,60 @@ export default {
       this.showSubSupGuide = false;
       this.universalPageActive = false;
       this.powerSetPageActive = false;
-      if (index === 0) {
+      // Reset set symbols visibility when switching topics
+      this.showSetSymbols = false;
+      this.showSetSymbolsError = false;
+      
+      if (index === 1) {
         this.resetSetsScores();
         this.resetSetsGoodJobs();
       }
-      if (index === 1) {
+      if (index === 2) {
         this.resetSingletonScores();
         this.resetSingletonGoodJobs();
       }
-      if (index === 2) {
+      if (index === 3) {
         this.resetInfiniteScores();
         this.resetInfiniteGoodJobs();
       }
-      if (index === 3) {
+      if (index === 4) {
         this.resetSubSupScores();
         this.resetSubSupGoodJobs();
       }
+    },
+    // NEW: Toggle set symbols with validation
+    toggleSetSymbols() {
+      if (this.completedSetSymbolsQuizCount < 5) {
+        this.showSetSymbolsError = true;
+        // Hide error after 3 seconds
+        setTimeout(() => {
+          this.showSetSymbolsError = false;
+        }, 3000);
+        return;
+      }
+      this.showSetSymbols = !this.showSetSymbols;
+      this.showSetSymbolsError = false;
+    },
+    // NEW: Check set symbols quiz answer
+    checkSetSymbolsAnswer(index) {
+      if (!this.setSymbolsAnswers[index]) {
+        return;
+      }
+      
+      const quizQuestion = this.setSymbolsQuiz[index];
+      const isCorrect = this.setSymbolsAnswers[index] === quizQuestion.answer;
+      
+      // Update quiz question state
+      this.setSymbolsQuiz[index].answered = true;
+      this.setSymbolsQuiz[index].correct = isCorrect;
+      
+      // Update score
+      if (isCorrect) {
+        this.setSymbolsScore = this.setSymbolsQuiz.filter(q => q.correct).length;
+      }
+      
+      // Save progress
+      this.saveToProgress('setSymbolsQuiz', this.completedSetSymbolsQuizCount);
     },
     resetSetsScores() {
       this.subsetScore = 0;
@@ -1430,6 +2384,8 @@ export default {
         }, 7000);
       }
       this.emptySetAnswer = "";
+      // Save singleton section after empty set quiz
+      this.saveToProgress('singletonFiniteEmpty', this.singletonSectionScore);
     },
     goToSingletonRepresentationPage() {
       this.singletonRepresentationPageActive = true;
@@ -1458,6 +2414,8 @@ export default {
         }, 7000);
         this.singletonRepresentationFeedback = "✅ Correct! The set of the 4 seasons in roster form is {Spring, Summer, Autumn, Winter}.";
         this.singletonRepresentationAttempts = 0;
+        // Save singleton section after finite input
+        this.saveToProgress('singletonFiniteEmpty', this.singletonSectionScore);
       } else if (this.singletonRepresentationAttempts === 1) {
         this.singletonRepresentationFeedback = "❌ Incorrect, please try again.";
       } else {
@@ -1479,6 +2437,8 @@ export default {
         setTimeout(() => {
           this.finiteQuizGoodJob = false;
         }, 7000);
+        // Save singleton section after finite quiz
+        this.saveToProgress('singletonFiniteEmpty', this.singletonSectionScore);
       }
     },
     checkSecondCardAnswer() {
@@ -1524,6 +2484,9 @@ export default {
     goToUnionPage() {
       this.unionPageActive = true;
       this.subsetPageActive = false;
+      // Save cardinality section after completing cardinality page
+      const cardinalityScore = this.subsetScore + this.subsetQuizScore + this.secondCardScore + this.thirdCardScore;
+      this.saveToProgress('setCardinality', cardinalityScore);
     },
     checkUnionAnswer() {
       this.unionGoodJob = false;
@@ -1578,6 +2541,9 @@ export default {
           this.thirdUnionGoodJob = false;
         }, 7000);
       }
+      // Save representation section after completing representation page
+      const representationScore = this.unionScore + this.secondUnionScore + this.thirdUnionScore;
+      this.saveToProgress('setCardinality', this.subsetScore + this.subsetQuizScore + this.secondCardScore + this.thirdCardScore + representationScore);
     },
     // Infinite Set Methods
     checkInfiniteAnswer() {
@@ -1656,6 +2622,8 @@ export default {
           this.equalQuizGoodJob = false;
         }, 7000);
       }
+      // Save infinite section after equal quiz
+      this.saveToProgress('infiniteEqualUnequal', this.infiniteSectionScore);
     },
     goToInfiniteRepresentationPage() {
       this.infiniteRepresentationPageActive = true;
@@ -1687,6 +2655,8 @@ export default {
         setTimeout(() => {
           this.unequalQuizGoodJob = false;
         }, 7000);
+        // Save infinite section after unequal quiz
+        this.saveToProgress('infiniteEqualUnequal', this.infiniteSectionScore);
       }
     },
     // Subset Superset Methods
@@ -1772,6 +2742,8 @@ export default {
           this.universalQuizGoodJob = false;
         }, 7000);
       }
+      // Save subsup section after universal quiz
+      this.saveToProgress('subsetPowersetUniversal', this.subSupSectionScore);
     },
     goToPowerSetPage() {
       this.powerSetPageActive = true;
@@ -1805,13 +2777,23 @@ export default {
         setTimeout(() => {
           this.powerSetQuizGoodJob = false;
         }, 7000);
+        // Save subsup section after power set quiz
+        this.saveToProgress('subsetPowersetUniversal', this.subSupSectionScore);
+      }
+    },
+    // Progress saving method (added for integration)
+    saveToProgress(key, score) {
+      try {
+        const existing = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
+        existing[key] = { score, completedAt: Date.now() };
+        localStorage.setItem('assessmentScores', JSON.stringify(existing));
+      } catch (e) {
+        console.error('Error saving to progress:', e);
       }
     }
   }
 };
 </script>
-```
-
 
 <style scoped>
 .lesson-container {
@@ -1820,7 +2802,7 @@ export default {
   margin: 0;
   padding: 10px;
   box-sizing: border-box;
-  background: url('/src/assets/images/bac.webp') no-repeat center center;
+  background: url('/images/bac.webp') no-repeat center center;
   background-size: cover;
   background-position: center center;
   background-attachment: scroll;
@@ -1863,14 +2845,25 @@ export default {
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 10px 40px;
+  font-size: 14px;
   cursor: pointer;
   border-radius: 5px;
   margin: 3px;
 }
 .submit-button:hover, .solve-button:hover, .next-button:hover, .step-button:hover {
   background: #388E3C;
+}
+/* NEW: Disabled button style */
+.submit-button:disabled, .solve-button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+/* NEW: Larger button style for specific quizzes */
+.larger-button {
+  padding: 10px 40px !important;
+  font-size: 14px !important;
+  font-weight: bold;
 }
 .result-box {
   margin-top: 5px;
@@ -1933,7 +2926,7 @@ export default {
 }
 /* 🔰 NEW: Step-by-step guide card */
 .guide-box {
-  background: #fff7d6;
+  background:  #eeede9;
   padding: 10px;
   border-radius: 8px;
   text-align: left;
@@ -1969,6 +2962,16 @@ export default {
     padding: 15px;
     font-size: 16px;
   }
+  .next-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 15px 15px; /* smaller than before */
+  font-size: 15px;   /* smaller font */
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 5px;
+  min-width: auto;   /* optional: shrink width */
+}
 }
 </style>
-```

@@ -1,8 +1,7 @@
-```vue
 <template>
   <div class="lesson-container">
-    <!-- Pre-Test Section -->
-    <div v-if="!preTestCompleted" class="pretest-container">
+    <!-- Pre-Test Section - Only show if not completed in this session -->
+    <div v-if="!preTestCompleted && !hasTakenPreTestInSession" class="pretest-container">
       <h3 class="title">📝 Pre-Test: Relations and Functions</h3>
       <div v-for="(question, index) in preTestQuestions" :key="index" class="pretest-box">
         <p><strong>{{ index + 1 }}. {{ question.question }}</strong></p>
@@ -25,12 +24,13 @@
           <h4>Your Score: {{ score }}/{{ preTestQuestions.length }}</h4>
           <p v-if="score === preTestQuestions.length">🎉 Excellent! You mastered this topic.</p>
           <p v-else-if="score >= Math.ceil(preTestQuestions.length/2)">👍 Good job! Let's review some concepts.</p>
-          <p v-else>💡 Don’t worry! The lesson will help you understand better.</p>
-          <button @click="preTestCompleted = true; showPreTestResult = false" class="next-button">➡️ Continue to Lesson</button>
+          <p v-else>💡 Don't worry! The lesson will help you understand better.</p>
+          <button @click="completePreTest" class="next-button">➡️ Continue to Lesson</button>
         </div>
       </div>
     </div>
-    <!-- Lesson AFTER Pre-Test -->
+    
+    <!-- Lesson AFTER Pre-Test or if already completed in session -->
     <div v-else-if="!showPostTest">
       <h4 class="title">📚 Relations and Functions</h4>
       <!-- Normal Lesson View -->
@@ -76,7 +76,7 @@
                   placeholder="Type your answer here"
                   class="answer-input"
                 />
-                <button @click="checkSubsetAnswer" class="submit-button" :disabled="!subsetAnswer.trim()">CHECK ANSWER</button>
+                <button @click="checkSubsetAnswer" class="submit-button" :disabled="!subsetAnswer.trim()">LET'S CHECK</button>
                 <div v-if="subsetFeedback" class="result-box">
                   <p>{{ subsetFeedback }}</p>
                 </div>
@@ -95,7 +95,7 @@
                   placeholder="Type your answer here"
                   class="answer-input"
                 />
-                <button @click="checkSubsetQuiz" class="submit-button" :disabled="!subsetQuizAnswer.trim()">CHECK ANSWER</button>
+                <button @click="checkSubsetQuiz" class="submit-button" :disabled="!subsetQuizAnswer.trim()">LET'S CHECK</button>
                 <div v-if="subsetQuizFeedback" class="result-box">
                   <p>{{ subsetQuizFeedback }}</p>
                 </div>
@@ -105,44 +105,44 @@
             <!-- Types of Relations Special Content -->
             <div v-if="topics[selectedTopic].type === 'types-of-relations'">
               <div class="content-box">
-                <h4> Types of Relations</h4>
+                <h5><strong>Types of Relations</strong> </h5>
                 <div class="definition-box">
                   <p>
-                    key types of relations:
+                    <strong>key types of relations:</strong>
                   </p>
-                  <ul>
-                    <li><strong>Equivalence Relation:</strong> Reflexive, Symmetric, and Transitive</li>
-                    <li><strong>Partial Order:</strong> Reflexive, Antisymmetric, and Transitive</li>
-                    <li><strong>Total Order:</strong> A partial order that is also comparable (for all a,b either aRb or bRa)</li>
-                  </ul>
+                  <p>
+                    <strong>Equivalence Relation:</strong> Reflexive, Symmetric, and Transitive<br></br>
+                    <strong>Partial Order:</strong> Reflexive, Antisymmetric, and Transitive <br></br>
+                    <strong>Total Order:</strong> A partial order that is also comparable (for all a,b either aRb or bRa)
+                  </p>
                 </div>
               </div>
               <!-- Partial Ordering Card -->
               <div class="content-box">
-                <h4>📘 Partial Ordering</h4>
+                <h4> Partial Ordering</h4>
                 <div class="definition-box">
                   <p>
-                    A partial ordering is a specific type of binary relation that organizes elements of a set in a consistent, but not necessarily complete, order.<br>
+                    <strong>A partial ordering </strong>is a specific type of binary relation that organizes elements of a set in a consistent, but not necessarily complete, order.<br>
                     Let P be a set. A binary relation ≤ on P is a partial order if it satisfies the following properties:
                   </p>
-                  <ul>
-                    <li><strong>Reflexive:</strong> For all a in P, a ≤ a</li>
-                    <li><strong>Antisymmetric:</strong> For all a,b in P, (a ≤ b and b ≤ a) implies a = b</li>
-                    <li><strong>Transitive:</strong> For all a,b,c in P, (a ≤ b and b ≤ c) implies a ≤ c</li>
-                  </ul>
+                  <p>
+                    <strong>Reflexive:</strong> For all a in P, a ≤ a<br></br>
+                    <strong>Antisymmetric:</strong> For all a,b in P, (a ≤ b and b ≤ a) implies a = b<br></br>
+                    <strong>Transitive:</strong> For all a,b,c in P, (a ≤ b and b ≤ c) implies a ≤ c<br></br>
+                  </p>
                   <p>If a relation satisfies these, it is called a partial order, and the pair (P,≤) is called a partially ordered set, or poset.</p>
                 </div>
               </div>
               <!-- LET'S TRY Card -->
               <div class="problem-box">
                 <h4> Mastery Quiz 1</h4>
-                <p><strong>QUESTION: The relation “is a subset of” (⊆) on the power set of {1,2,3} is a partial order. (True/False)</strong></p>
+                <p><strong>QUESTION: The relation "is a subset of" (⊆) on the power set of {1,2,3} is a partial order. (True/False)</strong></p>
                 <input
                   v-model="partialOrderAnswer"
                   placeholder="Type True or False"
                   class="answer-input"
                 />
-                <button @click="checkPartialOrderAnswer" class="submit-button" :disabled="!partialOrderAnswer.trim()">CHECK ANSWER</button>
+                <button @click="checkPartialOrderAnswer" class="submit-button" :disabled="!partialOrderAnswer.trim()">LET'S CHECK</button>
                 <div v-if="partialOrderFeedback" class="result-box">
                   <p>{{ partialOrderFeedback }}</p>
                 </div>
@@ -156,7 +156,7 @@
                   placeholder="Type your answer here"
                   class="answer-input"
                 />
-                <button @click="checkPosetAnswer" class="submit-button" :disabled="!posetAnswer.trim()">CHECK ANSWER</button>
+                <button @click="checkPosetAnswer" class="submit-button" :disabled="!posetAnswer.trim()">LET'S CHECK</button>
                 <button @click="hasseDiagramPageActive = true" class="next-button">➡️ Next</button>
                 <div v-if="posetFeedback" class="result-box">
                   <p>{{ posetFeedback }}</p>
@@ -171,7 +171,7 @@
                 class="lesson-image"
               />
               <div class="content-box">
-                <h4>📘 Key Terms</h4>
+                <h4><strong> Key Terms</strong></h4>
                 <div class="definition-box" style="display: flex; flex-direction: row;">
                   <div style="margin-right: 20px;">
                     <img
@@ -190,11 +190,11 @@
             <!-- Types of Functions Special Content -->
             <div v-if="topics[selectedTopic].type === 'types-of-functions'">
               <div class="content-box">
-                <h4>📘One-to-One Function (Injective)</h4>
+                <h4>One-to-One Function (Injective)</h4>
                 <div class="definition-box">
                   <p>
-                    A function is one-to-one (or injective) if different inputs have different outputs. Formally:<br>
-                    f(a) = f(b) ⇒ a = b<br>
+                    <strong>A function is one-to-one (or injective) </strong>if different inputs have different outputs.<br> Formally:
+                   <strong> f(a) = f(b) ⇒ a = b<br> </strong>
                     or equivalently, a ≠ b ⇒ f(a) ≠ f(b)
                   </p>
                 </div>
@@ -203,7 +203,7 @@
                   <div v-if="showInjectiveGuide" class="guide-container">
                     <button @click="showInjectiveGuide = false" class="next-button">CLICK TO HIDE</button>
                     <div class="guide-title">📘 Your Guide</div>
-                    <p>Goal: Show that f(x) = 2x + 1 is injective.</p>
+                    <p><strong>Goal: Show that f(x) = 2x + 1 is injective.</strong></p>
                     <div v-for="(step, index) in injectiveSteps" :key="index" class="step-box">
                       <button @click="toggleInjectiveStep(index)" class="step-button">Step {{ index + 1 }}</button>
                       <span v-if="injectiveRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -213,10 +213,10 @@
                 </div>
               </div>
               <!-- Injective Function Exercise -->
-              <div class="content-box">
+              <div class="problem-box">
                 <h4> Mastery Quiz 1</h4>
                 <p><strong>Q1. Identify if the function f(x) = 3x - 4, where f: ℝ → ℝ, is injective or not.</strong></p>
-                <p>The function is:</p>
+                <p>The function is?</p>
                 <div class="option-box">
                   <button
                     class="option-button"
@@ -239,10 +239,10 @@
               </div>
               <!-- Surjective Function Example -->
               <div class="content-box">
-                <h4>📘 Onto Function (Surjective)</h4>
+                <h4> Onto Function (Surjective)</h4>
                 <div class="definition-box">
                   <p>
-                    A function is onto (or surjective) if every element in the codomain is mapped by some input from the domain.
+                   <strong> A function is onto (or surjective)</strong> if every element in the codomain is mapped by some input from the domain.
 For every b ∈ B, there exists an a ∈ A such that f(a)=b.
                   </p>
                 </div>
@@ -251,7 +251,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
                   <div v-if="showSurjectiveGuide" class="guide-container">
                     <button @click="showSurjectiveGuide = false" class="next-button">CLICK TO HIDE</button>
                     <div class="guide-title">📘 Your Guide</div>
-                    <p>Goal: Show that f(x) = x³ is surjective from ℝ to ℝ.</p>
+                    <p><strong>Goal: Show that f(x) = x³ is surjective from ℝ to ℝ.</strong></p>
                     <div v-for="(step, index) in surjectiveSteps" :key="index" class="step-box">
                       <button @click="toggleSurjectiveStep(index)" class="step-button">Step {{ index + 1 }}</button>
                       <span v-if="surjectiveRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -263,8 +263,8 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <!-- LET'S TRY Card -->
               <div class="problem-box">
                 <h4> Mastery Quiz 2</h4>
-                <p><strong>QUESTION: Identify if the function f(x) = 2x + 1, where f: ℝ → ℝ, is surjective or not.</strong></p>
-                <p>The function is:</p>
+                <p><strong>Q1. Identify if the function f(x) = 2x + 1, where f: ℝ → ℝ, is surjective or not.</strong></p>
+                <p>The function is?</p>
                 <div class="option-box">
                   <button
                     class="option-button"
@@ -287,10 +287,10 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               </div>
               <!-- Bijective Function Example -->
               <div class="content-box">
-                <h4>📘 Bijective Function (One-to-One and Onto)</h4>
+                <h5><strong> Bijective Function (One-to-One and Onto)</strong></h5>
                 <div class="definition-box">
                   <p>
-                    A function is bijective if it is both one-to-one and onto.
+                    <strong>A function is bijective </strong> if it is both one-to-one and onto.
                     This means that every input maps to a unique output, and every output has a preimage.
                   </p>
                 </div>
@@ -299,7 +299,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
                   <div v-if="showBijectiveGuide" class="guide-container">
                     <button @click="showBijectiveGuide = false" class="next-button">CLICK TO HIDE</button>
                     <div class="guide-title">📘 Your Guide</div>
-                    <p>Goal: Show that f(x) = x + 5 is bijective from ℝ to ℝ.</p>
+                    <p><strong>Goal: Show that f(x) = x + 5 is bijective from ℝ to ℝ.</strong></p>
                     <div v-for="(step, index) in bijectiveSteps" :key="index" class="step-box">
                       <button @click="toggleBijectiveStep(index)" class="step-button">Step {{ index + 1 }}</button>
                       <span v-if="bijectiveRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -311,7 +311,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <!-- Bijective Function Exercise -->
               <div class="problem-box">
                 <h4> Mastery Quiz 3</h4>
-                <p><strong>QUESTION: Identify if the function f(x) = x + 5, where f: ℝ → ℝ, is bijective or not.</strong></p>
+                <p><strong>Q1 : Identify if the function f(x) = x + 5, where f: ℝ → ℝ, is bijective or not.</strong></p>
                 <p>The function is:</p>
                 <div class="option-box">
                   <button
@@ -338,10 +338,10 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
             <!-- Function Composition Special Content -->
             <div v-if="topics[selectedTopic].type === 'function-composition'">
               <div class="content-box">
-                <h4>📘 Function Composition</h4>
+                <h5><strong> Function Composition</strong></h5>
                 <div class="definition-box">
                   <p>
-                    Function composition is the process of applying one function to the result of another function.<br>
+                    <strong>Function composition </strong> is the process of applying one function to the result of another function.<br>
                     If you have two functions:<br>
                     • f : A → B<br>
                     • g : B → C<br>
@@ -354,7 +354,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
                   <div v-if="showCompositionGuide" class="guide-container">
                     <button @click="showCompositionGuide = false" class="next-button">CLICK TO HIDE</button>
                     <div class="guide-title">📘 Your Guide</div>
-                    <p>Goal: Compute (g ∘ f)(2) where f(x) = x + 1 and g(x) = x².</p>
+                    <p><strong>Goal: Compute (g ∘ f)(2) where f(x) = x + 1 and g(x) = x².</strong></p>
                     <div v-for="(step, index) in compositionSteps" :key="index" class="step-box">
                       <button @click="toggleCompositionStep(index)" class="step-button">Step {{ index + 1 }}</button>
                       <span v-if="compositionRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -365,20 +365,20 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               </div>
               <!-- Properties of Composition of Functions -->
               <div class="content-box">
-                <h4>📘 Properties of Composition of Functions</h4>
+                <h5><strong> Properties of Composition of Functions</strong></h5>
                 <div class="definition-box">
-                  <ol>
-                    <li><strong>Associativity:</strong> h ∘ ( g ∘ f ) = ( h ∘ g ) ∘ f</li>
-                    <li><strong>Identity Function:</strong> Let I ( x ) = x (identity function), then: f ∘ I = f and I ∘ f = f</li>
-                  </ol>
+                  <p>
+                    <strong>Associativity:</strong> h ∘ ( g ∘ f ) = ( h ∘ g ) ∘ f.<br>
+                    <strong>Identity Function:</strong> Let I ( x ) = x (identity function), then: f ∘ I = f and I ∘ f = f.
+                  </p>
                 </div>
               </div>
               <!-- Inverse Function -->
               <div class="content-box">
-                <h4>📘 Inverse Function</h4>
+                <h5><strong> Inverse Function</strong></h5>
                 <div class="definition-box">
                   <p>
-                    The inverse function of a function f, denoted f<sup>-1</sup>, "reverses" the action of f.<br>
+                    <strong>The inverse function </strong>if a function f, denoted f<sup>-1</sup>, "reverses" the action of f.<br>
                     If f takes input x and gives output y, then f<sup>-1</sup> takes y and returns x.<br>
                     If f (x) = y, then f<sup>-1</sup> (y) = x
                   </p>
@@ -388,7 +388,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
                   <div v-if="showInverseGuide" class="guide-container">
                     <button @click="showInverseGuide = false" class="next-button">CLICK TO HIDE</button>
                     <div class="guide-title">📘 Your Guide</div>
-                    <p>Given a function f(x):</p>
+                    <p><strong>Given a function f(x):</strong></p>
                     <div v-for="(step, index) in inverseSteps" :key="index" class="step-box">
                       <button @click="toggleInverseStep(index)" class="step-button">Step {{ index + 1 }}</button>
                       <span v-if="inverseRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -400,7 +400,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <!-- Inverse Function Exercise -->
               <div class="problem-box">
                 <h4> Mastery Quiz 1</h4>
-                <p><strong>Let f(x)=2x+3. Find the inverse function.</strong></p>
+                <p><strong> Q. Let f(x)=2x+3. Find the inverse function.</strong></p>
                 <div class="guide-box">
                   <button v-if="!showInverseExerciseGuide" @click="showInverseExerciseGuide = true" class="next-button">CLICK TO SHOW</button>
                   <div v-if="showInverseExerciseGuide" class="guide-container">
@@ -418,7 +418,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
                   placeholder="Type the inverse function here"
                   class="answer-input"
                 />
-                <button @click="checkInverseExerciseAnswer" class="submit-button" :disabled="!inverseExerciseAnswer.trim()">CHECK ANSWER</button>
+                <button @click="checkInverseExerciseAnswer" class="submit-button" :disabled="!inverseExerciseAnswer.trim()">LET'S CHECK</button>
                 <div v-if="inverseExerciseFeedback" class="result-box">
                   <p>{{ inverseExerciseFeedback }}</p>
                 </div>
@@ -427,37 +427,47 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
             </div>
           </div>
         </div>
+        <button @click="showMasteryResult = true" class="submit-button"> Click to see your Score</button>
+        <div v-if="showMasteryResult" class="modal-backdrop" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999; display: flex; justify-content: center; align-items: center;">
+          <div class="result-box" style="background: white; padding: 10px 50px; border-radius: 5px; max-width: 400px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+            <h4>Your Mastery Score: {{ totalMasteryScore }}/{{ totalMasteryQuizzes }}</h4>
+            <p v-if="totalMasteryScore === totalMasteryQuizzes">🎉 Excellent! You mastered all quizzes.</p>
+            <p v-else-if="totalMasteryScore >= Math.ceil(totalMasteryQuizzes / 2)">👍 Good job! You've grasped most concepts.</p>
+            <p v-else>💡 Keep practicing! Review the lessons.</p>
+            <button @click="showMasteryResult = false" class="next-button">Close</button>
+          </div>
+        </div>
       </div>
       <!-- Graphical Relationship Page -->
       <div v-else-if="graphicalRelationshipPageActive" class="content-box">
-        <h4>📘 Graphical Relationship</h4>
+        <h4> Graphical Relationship</h4>
         <div class="definition-box">
-          <p>• The graph of a function and its inverse are reflections of each other across the line y=x.</p>
+          <p> The graph of a function and its inverse are reflections of each other across the line <strong>y=x.</strong></p>
         </div>
         <!-- How to Check if Two Functions are Inverses Card -->
         <div class="content-box">
-          <h4>📘 How to Check if Two Functions are Inverses</h4>
+          <h4> How to Check if Two Functions are Inverses</h4>
           <div class="definition-box">
             <p>You can verify using:<br>
-            f (f<sup>-1</sup> (x)) = x<br>
-            f<sup>-1</sup> (f(x)) = x</p>
+            <strong>f (f<sup>-1</sup> (x)) = x</strong><br>
+            <strong>f<sup>-1</sup> (f(x)) = x</strong></p>
           </div>
         </div>
         <button @click="goBackToLesson" class="next-button">⬅️ Back to Lesson</button>
       </div>
       <!-- Binary Relations - Additional Practice -->
       <div v-else-if="subsetPageActive" class="content-box">
-        <h4>📘 Binary Relations </h4>
+        <h5><strong> Binary Relations</strong> </h5>
         <div class="definition-box">
           <p>
-            A binary relation formalizes the idea of a relationship between elements of two sets — or within a single set — using ordered pairs.<br>
+           <strong> A binary relation</strong> formalizes the idea of a relationship between elements of two sets — or within a single set — using ordered pairs.<br></br>
             ➡️ A binary relation R from a set A to a set B is a subset of the Cartesian product <strong> A×B.</strong><br>
-            R⊆A×B
+            <strong>R⊆A×B</strong>
           </p>
         </div>
         <!-- Special Case: Relation on One Set -->
         <div class="content-box">
-          <h4>📘 Special Case: Relation on One Set</h4>
+          <h5><strong>Special Case: Relation on One Set</strong></h5>
           <div class="definition-box">
             <p>
               If A=B, then R ⊆ A × A, and R is called a relation on set A.
@@ -471,7 +481,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         </div>
         <!-- Properties of Binary Relations -->
         <div class="content-box">
-          <h4>📘 Properties of Binary Relations</h4>
+          <h5><strong> Properties of Binary Relations</strong></h5>
           <table class="relation-properties-table">
             <thead>
               <tr>
@@ -500,7 +510,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
           </table>
         </div>
         <!-- Binary Relations - LET'S TRY -->
-        <div class="content-box">
+        <div class="problem-box">
           <h4> Mastery Quiz</h4>
           <p>
             <strong>QUESTION 1: Which of the following describes a reflexive relation?</strong>
@@ -512,7 +522,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <span class="option-text">{{ option }}</span>
             </label>
           </div>
-          <button @click="checkSecondCardAnswer" class="submit-button" :disabled="!secondCardAnswer">CHECK ANSWER</button>
+          <button @click="checkSecondCardAnswer" class="submit-button" :disabled="!secondCardAnswer">LET'S CHECK</button>
           <div v-if="secondCardFeedback" class="result-box">
             <p>{{ secondCardFeedback }}</p>
           </div>
@@ -522,26 +532,26 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
       </div>
       <!-- Hasse Diagram Lesson -->
       <div v-else-if="hasseDiagramPageActive" class="content-box">
-        <h4>📘 Hasse Diagram</h4>
+        <h4> Hasse Diagram</h4>
         <div class="definition-box">
           <p>
-            A Hasse diagram is a type of graph used to represent a finite partially ordered set (poset). It helps visualize the ordering among elements without cluttering the diagram with all reflexive and transitive relations.
+            <strong>A Hasse diagram </strong>is a type of graph used to represent a finite partially ordered set (poset). It helps visualize the ordering among elements without cluttering the diagram with all reflexive and transitive relations.
           </p>
         </div>
         <div class="content-box">
-          <h4>📘 Features of a Hasse Diagram</h4>
+          <h4> Features of a Hasse Diagram</h4>
           <div class="definition-box">
-            <ul>
-              <li><strong>Vertices:</strong> Elements of the set</li>
-              <li><strong>Edges:</strong> Drawn upward from lower to higher elements</li>
-              <li><strong>No arrows needed:</strong> Direction is implicitly "up"</li>
-              <li><strong>Reflexive edges are omitted</strong></li>
-              <li><strong>Transitive edges are also omitted to avoid redundancy</strong></li>
-            </ul>
+            <p>
+              <strong>Vertices:</strong> Elements of the set<br>
+              <strong>Edges:   </strong> Drawn upward from lower to higher elements<br>
+              <strong>No arrows needed:</strong> Direction is implicitly "up"<br>
+              <strong>Reflexive edges are omitted</strong><br>
+              <strong>Transitive edges are also omitted to avoid redundancy</strong><br>
+            </p>
           </div>
         </div>
         <div class="content-box">
-          <h6>Example: Divisibility on {1, 2, 4, 8}</h6>
+          <h5><strong>Example: Divisibility on {1, 2, 4, 8}</strong></h5>
           <div class="definition-box">
             <p>
               Define the partial order:<br>
@@ -577,7 +587,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               class="answer-input"
             />
           </div>
-          <button @click="checkHasseAnswer" class="submit-button" :disabled="!hasseTopAnswer.trim() || !hasseBottomAnswer.trim()">CHECK ANSWER</button>
+          <button @click="checkHasseAnswer" class="submit-button" :disabled="!hasseTopAnswer.trim() || !hasseBottomAnswer.trim()">LET'S CHECK</button>
           <div v-if="hasseFeedback" class="result-box">
             <p>{{ hasseFeedback }}</p>
           </div>
@@ -590,31 +600,31 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
       </div>
       <!-- Equivalence Relation Lesson -->
       <div v-else-if="equivalencePageActive" class="content-box">
-        <h4>📘 Equivalence Relation</h4>
+        <h4> Equivalence Relation</h4>
         <div class="definition-box">
           <p>
-            An equivalence relation on a set is a binary relation that satisfies the following three properties:
+           <strong> An equivalence relation on a set</strong> is a binary relation that satisfies the following three properties:
           </p>
-          <ol>
-            <li><strong>Reflexive:</strong> Every element is related to itself. For all a∈A, a∼a.</li>
-            <li><strong>Symmetric:</strong> If one element is related to another, then the second is related to the first. If a∼b, then b∼a.</li>
-            <li><strong>Transitive:</strong> If one element is related to a second, and the second to a third, then the first is related to the third. If a∼b and b∼c, then a∼c.</li>
-          </ol>
+          <p>
+            <strong>Reflexive:</strong> Every element is related to itself. For all a∈A, a∼a.<br>
+            <strong>Symmetric:</strong> If one element is related to another, then the second is related to the first. If a∼b, then b∼a.<br>
+            <strong>Transitive:</strong> If one element is related to a second, and the second to a third, then the first is related to the third. If a∼b and b∼c, then a∼c.
+         </p>
         </div>
         <!-- Equivalence Class Card -->
         <div class="content-box">
-          <h4>📘 Equivalence Class</h4>
+          <h4> Equivalence Class</h4>
           <div class="definition-box">
             <p>
               Given an equivalence relation ∼ on a set A, the equivalence class of an element a∈A is the set of all elements in A that are equivalent to a:<br>
-              [a]={x ∈ A ∣ x ∼ a}<br>
+              <strong>[a]={x ∈ A ∣ x ∼ a}<br> </strong>
               This set [a] contains all elements that are considered "the same" as a under the equivalence relation.
             </p>
           </div>
         </div>
         <!-- Equivalence Relation Example Card -->
-        <div class="content-box">
-          <h4>📘 Example: </h4>
+        <div class="problem-box">
+          <h4> Example: </h4>
           <div class="definition-box">
             <p>
              <strong> Let A=ℤ (set of all integers), and define a∼b if a≡b (mod 3).</strong><br>
@@ -632,13 +642,13 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
       </div>
       <!-- Examples of Functions Page -->
       <div v-else-if="examplesOfFunctionsPageActive" class="content-box">
-        <h4>📘Examples of Functions</h4>
+        <h4>Examples of Functions</h4>
         <div class="definition-box">
           <p>
-            <strong>1. Algebraic Function<br> </strong>
-            • Let f(x)=2x+3<br>
-            • Domain: All real numbers R<br>
-            • Example: f(2)=2(2)+3=7
+            <strong>1. Algebraic Function<br> </strong><br>
+            ➡️ Let f(x)=2x+3<br>
+            ➡️ Domain: All real numbers R<br>
+            ➡️ Example: f(2)=2(2)+3=7
           </p>
         </div>
         <div class="guide-box">
@@ -679,9 +689,9 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         </div>
         <div class="definition-box">
           <p>
-            <strong>3. Absolute Value Function<br> </strong>
-            • \( f(x) = |x| \)<br>
-            • Example: \( f(-3) = 3 \)
+            <strong>3. Absolute Value Function<br> </strong><br>
+            ➡️\( f(x) = |x| \)<br>
+            ➡️ Example: \( f(-3) = 3 \)
           </p>
         </div>
         <div class="guide-box">
@@ -699,10 +709,10 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         </div>
         <div class="definition-box">
           <p>
-            <strong>4. Mapping Example<br> </strong>
-            • Let A={1,2,3} and B={a,b,c},<br>
-            • If f(1) =a, f(2) = b, f(3) =a,<br>
-            • then f is a valid function.<br>
+            <strong>4. Mapping Example<br> </strong><br>
+            ➡️ Let A={1,2,3} and B={a,b,c},<br>
+            ➡️ If f(1) =a, f(2) = b, f(3) =a,<br>
+            ➡️ then f is a valid function.<br>
             • A function can assign the same output to different inputs, but one input cannot have more than one output.
           </p>
         </div>
@@ -724,7 +734,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
       </div>
       <!-- Function Quiz Page -->
       <div v-else-if="functionQuizPageActive" class="content-box">
-        <h4>📘 Function Quiz</h4>
+        <h4> Function Quiz</h4>
         <div class="problem-box">
           <h4> Mastery Quiz 1</h4>
           <p><strong>QUESTION: Which of the following is a function?</strong></p>
@@ -735,7 +745,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <span class="option-text">{{ option }}</span>
             </label>
           </div>
-          <button @click="checkFunctionQuizAnswer" class="submit-button" :disabled="!functionQuizAnswer">CHECK ANSWER</button>
+          <button @click="checkFunctionQuizAnswer" class="submit-button" :disabled="!functionQuizAnswer">LET'S CHECK</button>
           <div v-if="functionQuizFeedback" class="result-box">
             <p>{{ functionQuizFeedback }}</p>
           </div>
@@ -750,7 +760,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <span class="option-text">{{ option }}</span>
             </label>
           </div>
-          <button @click="checkFunctionQuiz2Answer" class="submit-button" :disabled="!functionQuiz2Answer">CHECK ANSWER</button>
+          <button @click="checkFunctionQuiz2Answer" class="submit-button" :disabled="!functionQuiz2Answer">LET'S CHECK</button>
           <div v-if="functionQuiz2Feedback" class="result-box">
             <p>{{ functionQuiz2Feedback }}</p>
           </div>
@@ -765,7 +775,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
               <span class="option-text">{{ option }}</span>
             </label>
           </div>
-          <button @click="checkFunctionQuiz3Answer" class="submit-button" :disabled="!functionQuiz3Answer">CHECK ANSWER</button>
+          <button @click="checkFunctionQuiz3Answer" class="submit-button" :disabled="!functionQuiz3Answer">LET'S CHECK</button>
           <div v-if="functionQuiz3Feedback" class="result-box">
             <p>{{ functionQuiz3Feedback }}</p>
           </div>
@@ -781,7 +791,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
             placeholder="Type your answer here"
             class="answer-input"
           />
-          <button @click="checkFunctionQuiz4Answer" class="submit-button" :disabled="!functionQuiz4Answer.trim()">CHECK ANSWER</button>
+          <button @click="checkFunctionQuiz4Answer" class="submit-button" :disabled="!functionQuiz4Answer.trim()">LET'S CHECK</button>
           <div v-if="functionQuiz4Feedback" class="result-box">
             <p>{{ functionQuiz4Feedback }}</p>
           </div>
@@ -791,7 +801,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
       </div>
       <!-- Operations on Functions Page -->
       <div v-else-if="operationsOnFunctionsPageActive" class="content-box">
-        <h4>📘 Operations on Functions (NOT Composition)</h4>
+        <h4> Operations on Functions (NOT Composition)</h4>
         <div class="definition-box">
           <p>
             These operations are performed pointwise (at each input value) and are not the same as composition. Here's how they work:<br>
@@ -801,14 +811,14 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         <div class="content-box">
           <h4>Addition of Functions</h4>
           <div class="definition-box">
-            <p>( f + g ) ( x ) = f (x) + g(x)</p>
+            <p><strong>( f + g ) ( x ) = f (x) + g(x)</strong></p>
           </div>
           <div class="guide-box">
             <button v-if="!showAdditionGuide" @click="showAdditionGuide = true" class="next-button">CLICK TO SHOW</button>
             <div v-if="showAdditionGuide" class="guide-container">
               <button @click="showAdditionGuide = false" class="next-button">CLICK TO HIDE</button>
               <div class="guide-title">📘 Your Guide</div>
-              <p>Example: If f(x)=2x, and g(x)=x+3, then (f+g) (x) = 2x + (x+3) = 3x+3</p>
+              <p><strong>Example: If f(x)=2x, and g(x)=x+3, then (f+g) (x) = 2x + (x+3) = 3x+3</strong></p>
               <div v-for="(step, index) in additionSteps" :key="index" class="step-box">
                 <button @click="toggleAdditionStep(index)" class="step-button">Step {{ index + 1 }}</button>
                 <span v-if="additionRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -820,14 +830,14 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         <div class="content-box">
           <h4>Subtraction of Functions</h4>
           <div class="definition-box">
-            <p>( f – g ) (x) = f(x) − g(x)</p>
+            <p><strong>( f – g ) (x) = f(x) − g(x)</strong></p>
           </div>
           <div class="guide-box">
             <button v-if="!showSubtractionGuide" @click="showSubtractionGuide = true" class="next-button">CLICK TO SHOW</button>
             <div v-if="showSubtractionGuide" class="guide-container">
               <button @click="showSubtractionGuide = false" class="next-button">CLICK TO HIDE</button>
               <div class="guide-title">📘 Your Guide</div>
-              <p>Example: If f(x)=2x, and g(x)=x+3, then ( f – g ) (x) = 2x − ( x + 3 ) = x − 3</p>
+              <p><strong>Example: If f(x)=2x, and g(x)=x+3, then ( f – g ) (x) = 2x − ( x + 3 ) = x − 3</strong></p>
               <div v-for="(step, index) in subtractionSteps" :key="index" class="step-box">
                 <button @click="toggleSubtractionStep(index)" class="step-button">Step {{ index + 1 }}</button>
                 <span v-if="subtractionRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -839,14 +849,14 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         <div class="content-box">
           <h4>Multiplication of Functions</h4>
           <div class="definition-box">
-            <p>( f ⋅ g ) (x) = f(x) ⋅ g(x)</p>
+            <p><strong>( f ⋅ g ) (x) = f(x) ⋅ g(x)</strong></p>
           </div>
           <div class="guide-box">
             <button v-if="!showMultiplicationGuide" @click="showMultiplicationGuide = true" class="next-button">CLICK TO SHOW</button>
             <div v-if="showMultiplicationGuide" class="guide-container">
               <button @click="showMultiplicationGuide = false" class="next-button">CLICK TO HIDE</button>
               <div class="guide-title">📘 Your Guide</div>
-              <p>Example: If f(x)=2x, and g(x)=x+3, then (f ⋅ g) (x) = 2x ⋅ (x+3) = 2x² + 6x</p>
+              <p><strong>Example: If f(x)=2x, and g(x)=x+3, then (f ⋅ g) (x) = 2x ⋅ (x+3) = 2x² + 6x</strong></p>
               <div v-for="(step, index) in multiplicationSteps" :key="index" class="step-box">
                 <button @click="toggleMultiplicationStep(index)" class="step-button">Step {{ index + 1 }}</button>
                 <span v-if="multiplicationRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -858,14 +868,14 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
         <div class="content-box">
           <h4>Division of Functions</h4>
           <div class="definition-box">
-            <p>(f/g)(x) = f(x)/g(x), where g(x) ≠ 0.</p>
+            <p><strong>(f/g)(x) = f(x)/g(x), where g(x) ≠ 0.</strong></p>
           </div>
           <div class="guide-box">
             <button v-if="!showDivisionGuide" @click="showDivisionGuide = true" class="next-button">CLICK TO SHOW</button>
             <div v-if="showDivisionGuide" class="guide-container">
               <button @click="showDivisionGuide = false" class="next-button">CLICK TO HIDE</button>
               <div class="guide-title">📘 Your Guide</div>
-              <p>Example: If f(x)=2x, and g(x)=x+3, then (f/g)(x) = 2x/(x+3)</p>
+              <p><strong>Example: If f(x)=2x, and g(x)=x+3, then (f/g)(x) = 2x/(x+3)</strong></p>
               <div v-for="(step, index) in divisionSteps" :key="index" class="step-box">
                 <button @click="toggleDivisionStep(index)" class="step-button">Step {{ index + 1 }}</button>
                 <span v-if="divisionRevealedSteps.includes(index)" class="step-arrow">→</span>
@@ -879,6 +889,7 @@ For every b ∈ B, there exists an a ∈ A such that f(a)=b.
     </div>
   </div>
 </template>
+
 <script>
 export default {
   name: "LessonTopicThree",
@@ -1042,27 +1053,27 @@ export default {
         {
           title: "Relations",
           type: "subset",
-          content: "A Relations in mathematics defines the relationship between two different sets of information.</strong>"
+          content: "<strong>A Relations in mathematics </strong>defines the relationship between two different sets of information.</strong>"
         },
         {
           title: "Types of Relations",
           type: "types-of-relations",
-          content: "Different types of relations have specific properties that define their behavior."
+          content: "<strong>Different types of relations </strong>have specific properties that define their behavior."
         },
         {
           title: "Function",
           type: "function",
-          content: "A function is a special type of relation between two sets, where each input has exactly one output. <br></br> A function <strong>f </strong> from a set A (domain) to a set B (codomain) is a rule that assigns to each element a ∈ A exactly one element b ∈ B.."
+          content: "<strong>A function</strong> is a special type of relation between two sets, where each input has exactly one output. <br></br> A function <strong>f </strong> from a set A (domain) to a set B (codomain) is a rule that assigns to each element a ∈ A exactly one element b ∈ B.."
         },
         {
           title: "Types of Functions",
           type: "types-of-functions",
-          content: "Functions can be classified based on their mapping properties, such as injective, surjective, and bijective."
+          content: "<strong>Functions</strong> can be classified based on their mapping properties, such as injective, surjective, and bijective."
         },
         {
           title: "Function Composition",
           type: "function-composition",
-          content: "Function composition is the process of applying one function to the result of another function."
+          content: "<strong>Function composition </strong> is the process of applying one function to the result of another function."
         }
       ],
       showAlgebraicGuide: false,
@@ -1191,7 +1202,12 @@ export default {
       ],
       inverseExerciseRevealedSteps: [],
       inverseExerciseAnswer: "",
-      inverseExerciseFeedback: ""
+      inverseExerciseFeedback: "",
+      showMasteryResult: false,
+      masteryScores: [0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      attempts: new Array(14).fill(0),
+      // Add a new data property to track if pre-test was taken in this session
+      hasTakenPreTestInSession: false
     };
   },
   computed: {
@@ -1202,21 +1218,58 @@ export default {
     postTestAllAnswered() {
       return this.postUserAnswers.length === this.postTestQuestions.length &&
              this.postUserAnswers.every(answer => answer !== undefined && answer !== '');
+    },
+    totalMasteryScore() {
+      return this.masteryScores.reduce((sum, score) => sum + score, 0);
+    },
+    totalMasteryQuizzes() {
+      return this.masteryScores.length;
     }
   },
   created() {
     // Shuffle questions on load
     this.preTestQuestions = this.shuffleArray(this.preTestQuestions);
     this.postTestQuestions = this.shuffleArray(this.postTestQuestions);
+    
+    // Check if user has already taken the pre-test in this session
+    this.checkPreTestStatus();
   },
   methods: {
+    checkPreTestStatus() {
+      // Check sessionStorage to see if pre-test was already completed in this session
+      const preTestStatus = sessionStorage.getItem('relationsPreTestCompleted');
+      this.hasTakenPreTestInSession = preTestStatus === 'true';
+      
+      // If pre-test was already completed, skip to the lesson directly
+      if (this.hasTakenPreTestInSession) {
+        this.preTestCompleted = true;
+      }
+    },
+    
     shuffleArray(array) {
       return array.sort(() => Math.random() - 0.5);
     },
+    
+    // ✅ UPDATED: Save Pre-Test Score to localStorage for ProgressPage
     submitPreTest() {
       this.score = this.preTestQuestions.reduce((acc, q, i) => acc + (this.userAnswers[i] === q.answer ? 1 : 0), 0);
       this.showPreTestResult = true;
+      // Load existing assessment scores from localStorage
+      let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
+      // Save/update pre-test score (key: 'relationsPreTest' for specificity; value: raw score as string)
+      existingAssessments['relationsPreTest'] = this.score.toString();
+      localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
     },
+    
+    // ✅ NEW METHOD: Mark pre-test as completed for this session
+    completePreTest() {
+      this.preTestCompleted = true;
+      this.showPreTestResult = false;
+      // Store in sessionStorage that pre-test was completed
+      sessionStorage.setItem('relationsPreTestCompleted', 'true');
+      this.hasTakenPreTestInSession = true;
+    },
+    
     toggleTopic(index) {
       this.selectedTopic = this.selectedTopic === index ? null : index;
       this.showSolution = this.showSolution.map(() => ({ main: false, alt: false }));
@@ -1242,12 +1295,14 @@ export default {
       this.inverseExerciseAnswer = "";
       this.inverseExerciseFeedback = "";
     },
+    
     toggleSolution(topicIndex, type) {
       this.showSolution[topicIndex][type] = !this.showSolution[topicIndex][type];
       if (!this.showSolution[topicIndex][type]) {
         this.revealedSteps[topicIndex][type] = [];
       }
     },
+    
     toggleStep(topicIndex, stepIndex, type) {
       const stepList = this.revealedSteps[topicIndex][type];
       if (stepIndex === 0 || stepList.includes(stepIndex - 1)) {
@@ -1255,46 +1310,81 @@ export default {
         stepPos === -1 ? stepList.push(stepIndex) : stepList.splice(stepPos, 1);
       }
     },
+    
     formatContent(content) {
       return content.replace(/\n/g, "<br>");
     },
+    
     checkSubsetAnswer() {
+      const userAns = this.subsetAnswer.trim();
       const correctAnswers = ["{p, r, s, q}", "{p,r,s,q}"];
-      this.subsetFeedback = correctAnswers.includes(this.subsetAnswer.trim()) ? "✅ Correct! {p, r, s, q} is the Range." : "❌ Try Again. Hint: All second elements";
-      this.subsetAnswer = "";
+      const isCorrect = correctAnswers.includes(userAns);
+      this.attempts[0]++;
+      if (isCorrect) {
+        this.subsetFeedback = `Good job, you have 1 point! {p, r, s, q} is the Range.`;
+        this.masteryScores[0] = 1;
+        this.subsetAnswer = "";
+      } else if (this.attempts[0] < 2) {
+        this.subsetFeedback = "❌ Try Again. Hint: All second elements";
+      } else {
+        this.subsetFeedback = `❌ Sorry, the correct answer is: {p, r, s, q}.`;
+      }
     },
+    
     toggleSubsetStep(stepIndex) {
       if (stepIndex === 0 || this.subsetRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.subsetRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.subsetRevealedSteps.push(stepIndex) : this.subsetRevealedSteps.splice(pos, 1);
       }
     },
+    
     checkSubsetQuiz() {
+      const userAns = this.subsetQuizAnswer.trim();
       const correctAnswers = ["{1, 2, 3}", "{1,2,3}"];
-      this.subsetQuizFeedback = correctAnswers.includes(this.subsetQuizAnswer.trim()) ? "✅ Correct! {1, 2, 3} is the Domain." : "❌ Try Again. Hint: All first elements";
-      this.subsetQuizAnswer = "";
+      const isCorrect = correctAnswers.includes(userAns);
+      this.attempts[1]++;
+      if (isCorrect) {
+        this.subsetQuizFeedback = `Good job, you have 1 point! {1, 2, 3} is the Domain.`;
+        this.masteryScores[1] = 1;
+        this.subsetQuizAnswer = "";
+      } else if (this.attempts[1] < 2) {
+        this.subsetQuizFeedback = "❌ Try Again. Hint: All first elements";
+      } else {
+        this.subsetQuizFeedback = `❌ Sorry, the correct answer is: {1, 2, 3}.`;
+      }
     },
+    
     checkSecondCardAnswer() {
       if (!this.secondCardAnswer) {
         this.secondCardFeedback = "⚠️ Please select an answer.";
         return;
       }
-      this.secondCardFeedback = this.secondCardAnswer === this.reflexiveQuiz.answer ?
-        "✅ Correct! ∀a∈A, (a,a)∈R describes a reflexive relation." :
-        "❌ Try Again. Hint: A reflexive relation requires every element to be related to itself.";
-      this.secondCardAnswer = "";
+      const isCorrect = this.secondCardAnswer === this.reflexiveQuiz.answer;
+      this.attempts[4]++;
+      if (isCorrect) {
+        this.secondCardFeedback = `Good job, you have 1 point! ∀a∈A, (a,a)∈R describes a reflexive relation.`;
+        this.masteryScores[4] = 1;
+        this.secondCardAnswer = "";
+      } else if (this.attempts[4] < 2) {
+        this.secondCardFeedback = "❌ Try Again. Hint: A reflexive relation requires every element to be related to itself.";
+      } else {
+        this.secondCardFeedback = `❌ Sorry, the correct answer is: ${this.reflexiveQuiz.answer}.`;
+      }
     },
+    
     toggleSecondCardStep(stepIndex) {
       if (stepIndex === 0 || this.secondCardRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.secondCardRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.secondCardRevealedSteps.push(stepIndex) : this.secondCardRevealedSteps.splice(pos, 1);
       }
     },
+    
     checkThirdCardAnswer() {
       const correctAnswer = "Each number in A is paired with a letter in B.";
       this.thirdCardFeedback = this.thirdCardAnswer.trim() === correctAnswer ? "✅ Correct! The verbal description is accurate." : "❌ Try Again. Hint: Describe the pairing between elements of A and B.";
       this.thirdCardAnswer = "";
     },
+    
     checkEquivalenceAnswer() {
       if (!this.equivalenceAnswer) {
         this.equivalenceFeedback = "⚠️ Please select an answer.";
@@ -1305,28 +1395,45 @@ export default {
         "❌ Try Again. Hint: An equivalence relation requires all three properties: Reflexive, Symmetric, and Transitive.";
       this.equivalenceAnswer = "";
     },
+    
     checkPartialOrderAnswer() {
       if (!this.partialOrderAnswer) {
         this.partialOrderFeedback = "⚠️ Please type an answer (True or False).";
         return;
       }
       const normalizedAnswer = this.partialOrderAnswer.trim().toLowerCase();
-      this.partialOrderFeedback = normalizedAnswer === "true" ?
-        "✅ Correct! The relation 'is a subset of' (⊆) on the power set of {1,2,3} is a partial order because it is reflexive, antisymmetric, and transitive." :
-        "❌ Try Again. Hint: Check if the relation 'is a subset of' satisfies reflexive, antisymmetric, and transitive properties.";
-      this.partialOrderAnswer = "";
+      const isCorrect = normalizedAnswer === "true";
+      this.attempts[2]++;
+      if (isCorrect) {
+        this.partialOrderFeedback = `Good job, you have 1 point! The relation 'is a subset of' (⊆) on the power set of {1,2,3} is a partial order because it is reflexive, antisymmetric, and transitive.`;
+        this.masteryScores[2] = 1;
+        this.partialOrderAnswer = "";
+      } else if (this.attempts[2] < 2) {
+        this.partialOrderFeedback = "❌ Try Again. Hint: Check if the relation 'is a subset of' satisfies reflexive, antisymmetric, and transitive properties.";
+      } else {
+        this.partialOrderFeedback = `❌ Sorry, the correct answer is: True.`;
+      }
     },
+    
     checkPosetAnswer() {
       if (!this.posetAnswer) {
         this.posetFeedback = "⚠️ Please type an answer.";
         return;
       }
       const normalizedAnswer = this.posetAnswer.trim().toLowerCase();
-      this.posetFeedback = normalizedAnswer === "poset" || normalizedAnswer === "partially ordered set" ?
-        "✅ Correct! The pair (P,≤), where P is a set and ≤ is a partial order, is called a poset (partially ordered set)." :
-        "❌ Try Again. Hint: The term describes a set with a partial order relation.";
-      this.posetAnswer = "";
+      const isCorrect = normalizedAnswer === "poset" || normalizedAnswer === "partially ordered set";
+      this.attempts[3]++;
+      if (isCorrect) {
+        this.posetFeedback = `Good job, you have 1 point! The pair (P,≤), where P is a set and ≤ is a partial order, is called a poset (partially ordered set).`;
+        this.masteryScores[3] = 1;
+        this.posetAnswer = "";
+      } else if (this.attempts[3] < 2) {
+        this.posetFeedback = "❌ Try Again. Hint: The term describes a set with a partial order relation.";
+      } else {
+        this.posetFeedback = `❌ Sorry, the correct answer is: poset.`;
+      }
     },
+    
     checkHasseAnswer() {
       if (!this.hasseTopAnswer || !this.hasseBottomAnswer) {
         this.hasseFeedback = "⚠️ Please type answers for both top and bottom elements.";
@@ -1334,12 +1441,20 @@ export default {
       }
       const normalizedTop = this.hasseTopAnswer.trim();
       const normalizedBottom = this.hasseBottomAnswer.trim();
-      this.hasseFeedback = normalizedTop === "16" && normalizedBottom === "1" ?
-        "✅ Correct! In the Hasse diagram for P={1,2,4,8,16} with divisibility, 16 is at the top (divisible by all) and 1 is at the bottom (divides all)." :
-        "❌ Try Again. Hint: The top element is divisible by all others, and the bottom element divides all others.";
-      this.hasseTopAnswer = "";
-      this.hasseBottomAnswer = "";
+      const isCorrect = normalizedTop === "16" && normalizedBottom === "1";
+      this.attempts[5]++;
+      if (isCorrect) {
+        this.hasseFeedback = `Good job, you have 1 point! In the Hasse diagram for P={1,2,4,8,16} with divisibility, 16 is at the top (divisible by all) and 1 is at the bottom (divides all).`;
+        this.masteryScores[5] = 1;
+        this.hasseTopAnswer = "";
+        this.hasseBottomAnswer = "";
+      } else if (this.attempts[5] < 2) {
+        this.hasseFeedback = "❌ Try Again. Hint: The top element is divisible by all others, and the bottom element divides all others.";
+      } else {
+        this.hasseFeedback = `❌ Sorry, the correct answers are Top: 16, Bottom: 1.`;
+      }
     },
+    
     checkInjectiveAnswer() {
       if (!this.injectiveAnswer) {
         this.injectiveFeedback = "⚠️ Please type an answer (True or False).";
@@ -1351,16 +1466,25 @@ export default {
         "❌ Try Again. Hint: A function is injective if f(a) = f(b) implies a = b.";
       this.injectiveAnswer = "";
     },
+    
     checkSurjectiveAnswer() {
       if (!this.surjectiveAnswer) {
         this.surjectiveFeedback = "⚠️ Please select an answer.";
         return;
       }
-      this.surjectiveFeedback = this.surjectiveAnswer === "surjective" ?
-        "✅ Correct! For f(x) = 2x + 1 (from ℝ to ℝ), for any y in ℝ, there exists x = (y - 1)/2 such that f(x) = y, making it surjective." :
-        "❌ Try Again. Hint: A function is surjective if every element in the codomain has at least one preimage in the domain.";
-      this.surjectiveAnswer = "";
+      const isCorrect = this.surjectiveAnswer === "surjective";
+      this.attempts[7]++;
+      if (isCorrect) {
+        this.surjectiveFeedback = `Good job, you have 1 point! For f(x) = 2x + 1 (from ℝ to ℝ), for any y in ℝ, there exists x = (y - 1)/2 such that f(x) = y, making it surjective.`;
+        this.masteryScores[7] = 1;
+        this.surjectiveAnswer = "";
+      } else if (this.attempts[7] < 2) {
+        this.surjectiveFeedback = "❌ Try Again. Hint: A function is surjective if every element in the codomain has at least one preimage in the domain.";
+      } else {
+        this.surjectiveFeedback = `❌ Sorry, the correct answer is: Surjective.`;
+      }
     },
+    
     checkBijectiveTermAnswer() {
       if (!this.bijectiveTermAnswer) {
         this.bijectiveTermFeedback = "⚠️ Please type an answer.";
@@ -1372,27 +1496,50 @@ export default {
         "❌ Try Again. Hint: The term describes a function that is both one-to-one and onto.";
       this.bijectiveTermAnswer = "";
     },
+    
     checkInjectiveExerciseAnswer() {
       if (!this.injectiveExerciseAnswer) {
         this.injectiveExerciseFeedback = "⚠️ Please select an answer.";
         return;
       }
-      this.injectiveExerciseFeedback = this.injectiveExerciseAnswer === "injective" ?
-        "✅ Correct! For f(x) = 3x - 4, if f(a) = f(b), then 3a - 4 = 3b - 4, so 3a = 3b, and a = b, making it injective." :
-        "❌ Incorrect! Hint: A function is injective if f(a) = f(b) implies a = b.";
-      this.injectiveExerciseAnswer = "";
+      const isCorrect = this.injectiveExerciseAnswer === "injective";
+      this.attempts[6]++;
+      if (isCorrect) {
+        this.injectiveExerciseFeedback = `Good job, you have 1 point! For f(x) = 3x - 4, if f(a) = f(b), then 3a - 4 = 3b - 4, so 3a = 3b, and a = b, making it injective.`;
+        this.masteryScores[6] = 1;
+        this.injectiveExerciseAnswer = "";
+      } else if (this.attempts[6] < 2) {
+        this.injectiveExerciseFeedback = "❌ Incorrect! Hint: A function is injective if f(a) = f(b) implies a = b.";
+      } else {
+        this.injectiveExerciseFeedback = `❌ Sorry, the correct answer is: Injective.`;
+      }
     },
+    
     checkBijectiveExerciseAnswer() {
       if (!this.bijectiveExerciseAnswer) {
         this.bijectiveExerciseFeedback = "⚠️ Please select an answer.";
         return;
       }
-      this.bijectiveExerciseFeedback = this.bijectiveExerciseAnswer === "bijective" ?
-        "✅ Correct! For f(x) = x + 5, it is injective (f(a) = f(b) ⇒ a + 5 = b + 5 ⇒ a = b) and surjective (for any y, x = y - 5 gives f(x) = y), so it is bijective." :
-        "❌ Incorrect! Hint: A function is bijective if it is both injective and surjective.";
-      this.bijectiveExerciseAnswer = "";
+      const isCorrect = this.bijectiveExerciseAnswer === "bijective";
+      this.attempts[8]++;
+      if (isCorrect) {
+        this.bijectiveExerciseFeedback = `Good job, you have 1 point! For f(x) = x + 5, it is injective (f(a) = f(b) ⇒ a + 5 = b + 5 ⇒ a = b) and surjective (for any y, x = y - 5 gives f(x) = y), so it is bijective.`;
+        this.masteryScores[8] = 1;
+        this.bijectiveExerciseAnswer = "";
+      } else if (this.attempts[8] < 2) {
+        this.bijectiveExerciseFeedback = "❌ Incorrect! Hint: A function is bijective if it is both injective and surjective.";
+      } else {
+        this.bijectiveExerciseFeedback = `❌ Sorry, the correct answer is: Bijective.`;
+      }
     },
+    
+    // ✅ UPDATED: Save Mastery Score on back to lesson
     goBackToLesson() {
+      // Save relations mastery score to localStorage
+      let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
+      existingAssessments['relationsMastery'] = this.totalMasteryScore.toString();
+      localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
+      
       this.equivalencePageActive = false;
       this.subsetPageActive = false;
       this.hasseDiagramPageActive = false;
@@ -1403,131 +1550,178 @@ export default {
       this.graphicalRelationshipPageActive = false;
       this.selectedTopic = null;
     },
+    
     toggleAlgebraicStep(stepIndex) {
       if (stepIndex === 0 || this.algebraicRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.algebraicRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.algebraicRevealedSteps.push(stepIndex) : this.algebraicRevealedSteps.splice(pos, 1);
       }
     },
+    
     togglePiecewiseStep(stepIndex) {
       if (stepIndex === 0 || this.piecewiseRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.piecewiseRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.piecewiseRevealedSteps.push(stepIndex) : this.piecewiseRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleAbsoluteStep(stepIndex) {
       if (stepIndex === 0 || this.absoluteRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.absoluteRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.absoluteRevealedSteps.push(stepIndex) : this.absoluteRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleMappingStep(stepIndex) {
       if (stepIndex === 0 || this.mappingRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.mappingRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.mappingRevealedSteps.push(stepIndex) : this.mappingRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleInjectiveStep(stepIndex) {
       if (stepIndex === 0 || this.injectiveRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.injectiveRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.injectiveRevealedSteps.push(stepIndex) : this.injectiveRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleSurjectiveStep(stepIndex) {
       if (stepIndex === 0 || this.surjectiveRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.surjectiveRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.surjectiveRevealedSteps.push(stepIndex) : this.surjectiveRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleBijectiveStep(stepIndex) {
       if (stepIndex === 0 || this.bijectiveRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.bijectiveRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.bijectiveRevealedSteps.push(stepIndex) : this.bijectiveRevealedSteps.splice(pos, 1);
       }
     },
+    
     checkFunctionQuizAnswer() {
       if (!this.functionQuizAnswer) {
         this.functionQuizFeedback = "⚠️ Please select an answer.";
         return;
       }
-      this.functionQuizFeedback = this.functionQuizAnswer === this.functionQuiz.answer ?
-        "✅ Correct! y = x²2 is a function because each input x has exactly one output y." :
-        "❌ Try Again. Hint: A function must assign exactly one output to each input.";
-      this.functionQuizAnswer = "";
+      const isCorrect = this.functionQuizAnswer === this.functionQuiz.answer;
+      this.attempts[10]++;
+      if (isCorrect) {
+        this.functionQuizFeedback = `Good job, you have 1 point! y = x²2 is a function because each input x has exactly one output y.`;
+        this.masteryScores[10] = 1;
+        this.functionQuizAnswer = "";
+      } else if (this.attempts[10] < 2) {
+        this.functionQuizFeedback = "❌ Try Again. Hint: A function must assign exactly one output to each input.";
+      } else {
+        this.functionQuizFeedback = `❌ Sorry, the correct answer is: ${this.functionQuiz.answer}.`;
+      }
     },
+    
     checkFunctionQuiz2Answer() {
       if (!this.functionQuiz2Answer) {
         this.functionQuiz2Feedback = "⚠️ Please select an answer.";
         return;
       }
-      this.functionQuiz2Feedback = this.functionQuiz2Answer === this.functionQuiz2.answer ?
-        "✅ Correct! x + 3y² = 4 is not a function because for a given x, there can be multiple y values (due to y²)." :
-        "❌ Try Again. Hint: A function must assign exactly one output to each input; check for equations where y² appears.";
-      this.functionQuiz2Answer = "";
+      const isCorrect = this.functionQuiz2Answer === this.functionQuiz2.answer;
+      this.attempts[11]++;
+      if (isCorrect) {
+        this.functionQuiz2Feedback = `Good job, you have 1 point! x + 3y² = 4 is not a function because for a given x, there can be multiple y values (due to y²).`;
+        this.masteryScores[11] = 1;
+        this.functionQuiz2Answer = "";
+      } else if (this.attempts[11] < 2) {
+        this.functionQuiz2Feedback = "❌ Try Again. Hint: A function must assign exactly one output to each input; check for equations where y² appears.";
+      } else {
+        this.functionQuiz2Feedback = `❌ Sorry, the correct answer is: ${this.functionQuiz2.answer}.`;
+      }
     },
+    
     checkFunctionQuiz3Answer() {
       if (!this.functionQuiz3Answer) {
         this.functionQuiz3Feedback = "⚠️ Please select an answer.";
         return;
       }
-      this.functionQuiz3Feedback = this.functionQuiz3Answer === this.functionQuiz3.answer ?
-        "✅ Correct! A = {(2,3), (4,2), (1,5)} is a function because each input maps to exactly one output." :
-        "❌ Try Again. Hint: A function requires each input (first element) to have exactly one output; check for repeated first elements in the pairs.";
-      this.functionQuiz3Answer = "";
+      const isCorrect = this.functionQuiz3Answer === this.functionQuiz3.answer;
+      this.attempts[12]++;
+      if (isCorrect) {
+        this.functionQuiz3Feedback = `Good job, you have 1 point! A = {(2,3), (4,2), (1,5)} is a function because each input maps to exactly one output.`;
+        this.masteryScores[12] = 1;
+        this.functionQuiz3Answer = "";
+      } else if (this.attempts[12] < 2) {
+        this.functionQuiz3Feedback = "❌ Try Again. Hint: A function requires each input (first element) to have exactly one output; check for repeated first elements in the pairs.";
+      } else {
+        this.functionQuiz3Feedback = `❌ Sorry, the correct answer is: ${this.functionQuiz3.answer}.`;
+      }
     },
+    
     checkFunctionQuiz4Answer() {
       if (!this.functionQuiz4Answer) {
         this.functionQuiz4Feedback = "⚠️ Please type an answer.";
         return;
       }
       const normalizedAnswer = this.functionQuiz4Answer.trim();
-      this.functionQuiz4Feedback = normalizedAnswer === "5" ?
-        "✅ Correct! For f(x) = |x|, f(5) = |5| = 5." :
-        "❌ Try Again. Hint: The absolute value function |x| returns the non-negative value of x.";
-      this.functionQuiz4Answer = "";
+      const isCorrect = normalizedAnswer === "5";
+      this.attempts[13]++;
+      if (isCorrect) {
+        this.functionQuiz4Feedback = `Good job, you have 1 point! For f(x) = |x|, f(5) = |5| = 5.`;
+        this.masteryScores[13] = 1;
+        this.functionQuiz4Answer = "";
+      } else if (this.attempts[13] < 2) {
+        this.functionQuiz4Feedback = "❌ Try Again. Hint: The absolute value function |x| returns the non-negative value of x.";
+      } else {
+        this.functionQuiz4Feedback = `❌ Sorry, the correct answer is: 5.`;
+      }
     },
+    
     toggleAdditionStep(stepIndex) {
       if (stepIndex === 0 || this.additionRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.additionRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.additionRevealedSteps.push(stepIndex) : this.additionRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleSubtractionStep(stepIndex) {
       if (stepIndex === 0 || this.subtractionRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.subtractionRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.subtractionRevealedSteps.push(stepIndex) : this.subtractionRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleMultiplicationStep(stepIndex) {
       if (stepIndex === 0 || this.multiplicationRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.multiplicationRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.multiplicationRevealedSteps.push(stepIndex) : this.multiplicationRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleDivisionStep(stepIndex) {
       if (stepIndex === 0 || this.divisionRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.divisionRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.divisionRevealedSteps.push(stepIndex) : this.divisionRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleCompositionStep(stepIndex) {
       if (stepIndex === 0 || this.compositionRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.compositionRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.compositionRevealedSteps.push(stepIndex) : this.compositionRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleInverseStep(stepIndex) {
       if (stepIndex === 0 || this.inverseRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.inverseRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.inverseRevealedSteps.push(stepIndex) : this.inverseRevealedSteps.splice(pos, 1);
       }
     },
+    
     toggleInverseExerciseStep(stepIndex) {
       if (stepIndex === 0 || this.inverseExerciseRevealedSteps.includes(stepIndex - 1)) {
         const pos = this.inverseExerciseRevealedSteps.indexOf(stepIndex);
         pos === -1 ? this.inverseExerciseRevealedSteps.push(stepIndex) : this.inverseExerciseRevealedSteps.splice(pos, 1);
       }
     },
+    
     checkInverseExerciseAnswer() {
       if (!this.inverseExerciseAnswer) {
         this.inverseExerciseFeedback = "⚠️ Please type an answer.";
@@ -1535,14 +1729,22 @@ export default {
       }
       const normalizedAnswer = this.inverseExerciseAnswer.trim().replace(/\s+/g, '');
       const correctAnswer = "(x-3)/2";
-      this.inverseExerciseFeedback = normalizedAnswer === correctAnswer ?
-        "✅ Correct! The inverse function is f^{-1}(x) = (x - 3)/2." :
-        "❌ Try Again. Hint: Follow the steps to solve for the inverse.";
-      this.inverseExerciseAnswer = "";
+      const isCorrect = normalizedAnswer === correctAnswer;
+      this.attempts[9]++;
+      if (isCorrect) {
+        this.inverseExerciseFeedback = `Good job, you have 1 point! The inverse function is f^{-1}(x) = (x - 3)/2.`;
+        this.masteryScores[9] = 1;
+        this.inverseExerciseAnswer = "";
+      } else if (this.attempts[9] < 2) {
+        this.inverseExerciseFeedback = "❌ Try Again. Hint: Follow the steps to solve for the inverse.";
+      } else {
+        this.inverseExerciseFeedback = `❌ Sorry, the correct answer is: (x-3)/2.`;
+      }
     }
   }
 };
 </script>
+
 <style scoped>
 .lesson-container {
   width: 100%;
@@ -1550,7 +1752,7 @@ export default {
   margin: 0;
   padding: 10px;
   box-sizing: border-box;
-  background: url('/src/assets/images/bac.webp') no-repeat center center;
+  background: url('/images/bac.webp') no-repeat center center;
   background-size: cover;
   background-position: center center;
   background-attachment: scroll;
@@ -1573,10 +1775,12 @@ export default {
   margin-bottom: 10px;
 }
 .definition-box {
-  background: #FFFFE0;
+  background: #eeede9;
   padding: 10px;
   border-radius: 8px;
   margin: 10px 0;
+  border: 1px solid #efd56d;
+  text-align: left;
 }
 .problem-box {
   background: rgb(221, 231, 238);
@@ -1599,8 +1803,8 @@ export default {
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 10px 40px;
+  font-size: 14px;
   cursor: pointer;
   border-radius: 5px;
   margin: 3px;
@@ -1641,7 +1845,7 @@ export default {
 }
 /* 🔰 NEW: Step-by-step guide card */
 .guide-box {
-  background: #fff7d6;
+  background: #d6fff2;
   padding: 10px;
   border-radius: 8px;
   text-align: left;
@@ -1760,4 +1964,3 @@ export default {
   }
 }
 </style>
-```

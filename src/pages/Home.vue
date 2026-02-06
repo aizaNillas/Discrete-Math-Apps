@@ -1,13 +1,26 @@
-```vue
 <template>
   <q-page class="q-pa-md custom-page">
     <div class="content-wrapper">
-      <!-- ✅ Welcome Message with Bigger Text and Color -->
-      <h5 class="welcome-text q-mb-md">
-        WELCOME, STUDENTS<span class="highlighted-text">{{ userName.toUpperCase() }}</span>!
-      </h5>
 
-      <!-- ✅ Start Button with Green Color -->
+      <!-- 🌧️ RANDOM FALLING DISCRETE MATH SYMBOLS (6 ONLY) -->
+      <div class="math-symbols">
+        <span>∑</span>
+        <span>∏</span>
+        <span>∧</span>
+        <span>∨</span>
+        <span>∈</span>
+        <span>∀</span>
+      </div>
+
+      <!-- ✅ Discrete Mathematics (ANIMATED) -->
+      <h2
+        class="text-h4 gradient-text q-mb-xl animated-title"
+        style="font-size: 3.2rem; margin-bottom: 12px;"
+      >
+        Discrete Mathematics
+      </h2>
+
+      <!-- ✅ Start Button -->
       <q-btn
         color="green-5"
         label="Let's Start"
@@ -15,192 +28,205 @@
         icon="play_arrow"
         size="lg"
         class="custom-btn q-mt-md"
+        style="margin-top: 8px;"
       />
 
-      <!-- ✅ Discrete Mathematics Text (Replaces Image) -->
-      <div class="custom-math-text rounded-borders q-mt-xl">
-        <h2 class="text-h4 gradient-text">Discrete Mathematics</h2>
+      <!-- ✅ Welcome Message with User Name -->
+      <div
+        class="custom-math-text rounded-borders q-mt-xl"
+        style="padding: 12px 16px; max-width: 420px; margin-top: 14px;"
+      >
+        <h5 class="welcome-text animated-welcome">
+          {{ welcomeMessage }}
+        </h5>
       </div>
+
     </div>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed } from "vue";
 
 export default defineComponent({
   name: "HomePage",
-
   setup() {
-    const userName = ref("Student"); // Default Name
+    // User data
+    const currentUser = ref(null);
+    const isAdmin = ref(false);
+    const isStudent = ref(false);
 
-    // ✅ Get Logged-in Username
+    // Load user data from localStorage
+    const loadUserData = () => {
+      // Check for registered user
+      const userData = localStorage.getItem("currentUser");
+      if (userData) {
+        try {
+          currentUser.value = JSON.parse(userData);
+        } catch (error) {
+          console.error("Error parsing user data:", error);
+          localStorage.removeItem("currentUser");
+        }
+      }
+      
+      // Check for admin/student
+      isAdmin.value = localStorage.getItem("isAdmin") === "true";
+      isStudent.value = localStorage.getItem("isStudent") === "true";
+    };
+
+    // Welcome message based on user type
+    const welcomeMessage = computed(() => {
+      if (currentUser.value && currentUser.value.fullName) {
+        return `WELCOME ${currentUser.value.fullName.toUpperCase()}`;
+      } else if (currentUser.value && currentUser.value.username) {
+        return `WELCOME ${currentUser.value.username.toUpperCase()}`;
+      } else if (isAdmin.value) {
+        return "WELCOME ADMIN";
+      } else if (isStudent.value) {
+        return "WELCOME STUDENT";
+      } else {
+        return "WELCOME STUDENTS";
+      }
+    });
+
+    // Load user data on component mount
     onMounted(() => {
-      userName.value =
-        localStorage.getItem("studentName") ||
-        (localStorage.getItem("isAdmin") === "true" ? "Admin" : "Student");
+      loadUserData();
     });
 
     return {
-      userName,
+      welcomeMessage
     };
   },
 });
 </script>
 
 <style scoped>
-/* ✅ Background Gradient + Image */
+/* 🌧️ RANDOM FALLING SYMBOLS (6 ONLY) */
+.math-symbols {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.math-symbols span {
+  position: absolute;
+  top: -15%;
+  font-size: 3rem; /* Bigger symbols */
+  color: rgba(255, 255, 255, 0.35);
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/* Positioning 6 symbols horizontally */
+.math-symbols span:nth-child(1) { left: 10%;  animation-duration: 9s;  animation-delay: 0s; }
+.math-symbols span:nth-child(2) { left: 25%;  animation-duration: 11s; animation-delay: 2s; }
+.math-symbols span:nth-child(3) { left: 40%;  animation-duration: 10s; animation-delay: 4s; }
+.math-symbols span:nth-child(4) { left: 55%;  animation-duration: 12s; animation-delay: 1s; }
+.math-symbols span:nth-child(5) { left: 70%;  animation-duration: 8s;  animation-delay: 3s; }
+.math-symbols span:nth-child(6) { left: 85%;  animation-duration: 10s; animation-delay: 5s; }
+
+@keyframes fall {
+  0%   { transform: translateY(-20%) rotate(0deg); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+}
+
+/* KEEP CONTENT ABOVE SYMBOLS */
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+/* ================= EXISTING STYLES ================= */
+
 .custom-page {
-  background: url('/images/bc03.webp') no-repeat center center fixed;
+  background: url("/images/bc03.webp") no-repeat center center fixed;
   background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
-/* 🔥 Neon Floating Box Background for Discrete Mathematics */
 .custom-math-text {
-  max-width: 100%;
-  height: auto;
+  background: rgba(0, 0, 0, 0.45);
   border-radius: 12px;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.55);
-  box-shadow: 0 0 25px rgba(0, 255, 255, 0.25);
-  margin-bottom: 20px;
-  animation: floatBox 4s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.25);
 }
 
-/* Floating Animation */
-@keyframes floatBox {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-/* 🎨 Gradient Text for Discrete Mathematics */
 .gradient-text {
   background: linear-gradient(90deg, #ff47b3, #c77dff, #4dd0ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: bold;
-  font-family: Arial, sans-serif;
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-  animation: slideInFromLeft 1.2s ease-out;
 }
 
-/* Slide-In Animation */
-@keyframes slideInFromLeft {
-  0% { transform: translateX(-120%); opacity: 0; }
-  100% { transform: translateX(0); opacity: 1; }
+/* 🎨 Discrete Mathematics ANIMATION (floating + subtle glow) */
+.animated-title {
+  animation: floatTitle 4s ease-in-out infinite, glowTitle 2s ease-in-out infinite alternate;
 }
 
-/* Content Wrapper */
-.content-wrapper {
-  max-width: 600px;
-  width: 100%;
+@keyframes floatTitle {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
 }
 
-/* 🎉 Futuristic Neon Button */
+@keyframes glowTitle {
+  0% { text-shadow: 0 0 10px rgba(255,255,255,0.4); }
+  100% { text-shadow: 0 0 25px rgba(255,255,255,0.6); }
+}
+
 .custom-btn {
   width: 200px;
-  padding: 12px;
+  padding: 18px;
   border-radius: 8px;
-  color: white;
-  background: #4caf50;
   font-weight: bold;
-  transition: all 0.3s ease-in-out;
-  position: relative;
-  overflow: hidden;
-  animation: buttonPulse 2s infinite ease-in-out;
-  border: none;
-  cursor: pointer;
-  font-family: Arial, sans-serif;
+  animation: buttonPulse 2s infinite;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Button Pulse Glow */
 @keyframes buttonPulse {
-  0% { box-shadow: 0 0 10px rgba(0,255,0,0.5); }
-  50% { box-shadow: 0 0 25px rgba(124,255,124,0.8); }
-  100% { box-shadow: 0 0 10px rgba(0,255,0,0.5); }
+  0% { box-shadow: 0 0 10px rgba(0,255,0,0.4); }
+  50% { box-shadow: 0 0 25px rgba(0,255,0,0.7); }
+  100% { box-shadow: 0 0 10px rgba(0,255,0,0.4); }
 }
 
-/* Blue Glow On Hover */
-.custom-btn:hover {
-  transform: scale(1.12);
-  background: #5ed95e;
+/* 🎓 WELCOME MESSAGE ANIMATION */
+.animated-welcome {
+  display: inline-block;
+  animation: wavePop 1.2s ease-out, waveTilt 2s ease-in-out infinite;
 }
 
-/* Blue Outer Glow On Hover */
-.custom-btn::before {
-  content: "";
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #00eaff, #4af6ff);
-  z-index: -1;
-  opacity: 0;
-  filter: blur(12px);
-  transition: 0.3s;
+@keyframes wavePop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
-.custom-btn:hover::before {
-  opacity: 1;
+@keyframes waveTilt {
+  0% { transform: rotate(-5deg); }
+  25% { transform: rotate(3deg); }
+  50% { transform: rotate(-2deg); }
+  75% { transform: rotate(2deg); }
+  100% { transform: rotate(0deg); }
 }
 
-/* 🌟 NEW: Welcome Text with Pink-Purple-Navy Gradient + Glow */
 .welcome-text {
-  font-size: 2.5rem;
+  font-size: 2.4rem;
   font-weight: bold;
-  font-family: Arial, sans-serif;
-
-  /* New Gradient Color */
   background: linear-gradient(90deg, #ff4da6, #b14dff, #3b3bff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-
-  /* Neon Glow Effect */
-  text-shadow: 0 0 20px rgba(255, 0, 128, 0.6),
-               0 0 40px rgba(136, 0, 255, 0.6);
-
-  /* Animations */
-  animation: welcomeGlow 3s infinite alternate ease-in-out,
-             fadeGrow 1.5s ease-out;
-}
-
-/* Glow Animation */
-@keyframes welcomeGlow {
-  0% { text-shadow: 0 0 10px rgba(255, 0, 128, 0.5); }
-  100% { text-shadow: 0 0 35px rgba(170, 0, 255, 1); }
-}
-
-/* Fade + Scale on Load */
-@keyframes fadeGrow {
-  0% { opacity: 0; transform: scale(0.7); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-/* Gradient Highlight Name */
-.highlighted-text {
-  background: linear-gradient(90deg, #ff4da6, #c04dff, #6a62ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Mobile-specific: Hide highlighted-text on mobile */
-@media (max-width: 599px) {
-  .highlighted-text {
-    display: none;
-  }
+  text-shadow: 0 0 10px rgba(170,0,255,0.5);
 }
 </style>
-```

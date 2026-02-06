@@ -1,8 +1,13 @@
 <template>
   <q-page class="q-pa-md bg-gradient">
-    <h2 class="text-h5 q-mb-md text-center text-white">Discrete Mathematics Lessons</h2>
+    <!-- Moved the title to appear lower on the screen -->
+    <div style="height: 10vh; min-height: 80px;"></div>
+    
+    <h5 class="text-h6 q-mb-sm text-center text-white">
+      Discrete Mathematics Lessons
+    </h5>
 
-    <div class="q-gutter-sm lessons-container">
+    <div class="lessons-container">
       <!-- 📚 Existing Lessons -->
       <q-card
         v-for="lesson in lessons"
@@ -12,7 +17,12 @@
         v-ripple
       >
         <q-card-section class="lesson-content">
-          <q-avatar :icon="lesson.icon" color="primary" text-color="white" size="40px" />
+          <q-avatar
+            :icon="lesson.icon"
+            color="primary"
+            text-color="white"
+            size="34px"
+          />
           <div class="lesson-info">
             <div class="lesson-title">{{ lesson.title }}</div>
             <div class="lesson-description">{{ lesson.description }}</div>
@@ -21,7 +31,7 @@
         </q-card-section>
       </q-card>
 
-      <!-- 📝 New Lessons from Admin Panel with Delete Button -->
+      <!-- 📝 New Lessons -->
       <q-card
         v-for="(addedLesson, index) in addedLessons"
         :key="index"
@@ -30,13 +40,17 @@
         v-ripple
       >
         <q-card-section class="lesson-content">
-          <q-avatar name="book" color="secondary" text-color="white" size="40px" />
+          <q-avatar
+            name="book"
+            color="secondary"
+            text-color="white"
+            size="34px"
+          />
           <div class="lesson-info">
             <div class="lesson-title">{{ addedLesson.title }}</div>
             <div class="lesson-description">{{ addedLesson.content }}</div>
           </div>
 
-          <!-- 🗑️ Delete Button for Admin -->
           <q-btn
             flat
             dense
@@ -61,11 +75,24 @@ export default defineComponent({
     const router = useRouter();
 
     const lessons = [
+      {
+        id: 0,
+        title: "Introduction to Discrete Mathematics",
+        icon: "analytics",
+        description: "Overview of Discrete Mathematics"
+      },
       { id: 1, title: "Propositional Logic", icon: "psychology", description: "Understand mathematical Propositional Logic" },
       { id: 2, title: "Set Theory", icon: "{ }", description: "Learn about set and types of set" },
       { id: 3, title: "Operations on Sets", icon: "merge_type", description: "Master union, intersection & complement" },
-      { id: 4, title: "Relations and functions", icon: "𝒇𝒙", description: "Explore relationships within Relations and function" },
-      { id: 5, title: "Algorithm", icon: "memory", description: "Learn fundamentals of algorithms in discrete mathematics" },
+      { id: 4, title: "Relations and functions", icon: "𝒇𝒙", description: "Explore relationships in Relations and function" },
+      { id: 5, title: "Algorithm", icon: "memory", description: "Learn fundamentals of algorithms and structured methods for problem solving" },
+      { id: 6, title: "Graph Theory", icon: "hub", description: "Fundamentals and Basic Properties" },
+      {
+        id: 7,
+        title: "Matrices",
+        icon: "grid_on",
+        description: "Understand matrices and their operations"
+      }
     ];
 
     const addedLessons = ref([]);
@@ -98,90 +125,73 @@ export default defineComponent({
       addedLessons,
       navigateToLessonDetail,
       navigateToAddedLessonDetail,
-      deleteLesson,
+      deleteLesson
     };
-  },
+  }
 });
 </script>
 
 <style scoped>
-/* Background */
 .bg-gradient {
-  background: linear-gradient(135deg, #1565c0, #1e88e5);
-  background: url('/images/aalesson.jpg') no-repeat center center fixed;
+  background: url('/images/bac.webp')  no-repeat center center fixed;
   background-size: cover;
-  background-position: center center;
-  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 10px;
-  overflow: hidden; /* prevent scrolling */
+  justify-content: flex-start;
+  padding-top: 0;
+  overflow: hidden;
 }
 
-/* Container to prevent scrolling */
 .lessons-container {
   width: 100%;
-  max-height: 100vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px; /* smaller gaps to fit all lessons */
+  max-width: 340px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 2px;
 }
 
-/* Lesson Cards */
 .lesson-card {
-  background: #ffffffd4;
+  background: rgba(255, 255, 255, 0.69);
   border-radius: 8px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  width: 100%;
-  max-width: 300px; /* smaller card */
-}
-
-.lesson-card:active {
-  transform: scale(0.97);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
 .lesson-content {
   display: flex;
   align-items: center;
-  padding: 8px; /* smaller padding */
+  padding: 3px;
 }
 
 .lesson-info {
   flex-grow: 1;
-  margin-left: 8px; /* smaller margin */
+  margin-left: 3px;
 }
 
+/* ✅ TITLE MAS DAKO */
 .lesson-title {
-  font-size: 1em; /* smaller font */
-  font-weight: 600;
-  color: rgb(17, 18, 19);
+  font-size: 0.9em;      /* ⬅ increased */
+  font-weight: 700;
+  color: #111;
+  line-height: 1.15;
 }
 
+/* ✅ DESCRIPTION MAS GAMAY */
 .lesson-description {
-  font-size: 0.8em; /* smaller font */
-  color: #666;
+  font-size: 0.65em;
+  color: #555;
 }
 
 .lesson-arrow {
   color: #1e88e5;
-  font-size: 1.2em; /* smaller arrow */
+  font-size: 1em;
 }
 
-/* Responsive */
 @media (max-width: 600px) {
-  .lesson-card {
-    max-width: 90%;
-  }
-  .lesson-title {
-    font-size: 0.95em;
-  }
-  .lesson-description {
-    font-size: 0.75em;
+  .lessons-container {
+    max-width: 100%;
   }
 }
 </style>

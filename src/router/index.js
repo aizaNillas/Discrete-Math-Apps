@@ -7,6 +7,9 @@ import {
 } from "vue-router";
 import routes from "./routes";
 
+// ✅ IMPORT ANG ATONG AUTH GUARD
+import { authGuard } from "./authGuard";
+
 export default defineRouter(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
@@ -22,24 +25,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
-  // ✅ Admin & Student Route Guard to Protect Routes
-  Router.beforeEach((to, from, next) => {
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
-    const isStudent = localStorage.getItem("isStudent") === "true";
-
-    // 🔐 If trying to access protected route but not logged in
-    if (to.meta.requiresAuth && !isAdmin && !isStudent) {
-      next("/login"); // Redirect to login if not authenticated
-    }
-    // 🏠 Redirect to Main Home after successful login
-    else if (to.path === "/login" && (isAdmin || isStudent)) {
-      next("/main/home"); // Redirect to Home after login
-    }
-    // 🚀 Proceed to the next page
-    else {
-      next(); // Allow normal navigation
-    }
-  });
+  // 🔐 USE OUR AUTH GUARD (with registration support)
+  Router.beforeEach(authGuard);
 
   return Router;
 });
