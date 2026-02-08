@@ -1114,8 +1114,8 @@
             <div v-if="isDerivedQuizComplete" class="completion-box" style="margin-top: 30px; padding: 20px; background: #d4edda; border-radius: 10px; text-align: center;">
               <h4>🎉 Quiz Completed!</h4>
               <p>You scored {{ derivedScore }} out of {{ derivedQuizzes.length * 4 }}.</p>
-              <p v-if="derivedScore < 15" style="color: #ff9800; font-weight: bold;">
-                ⚠️ You can proceed with {{ derivedScore }} points (minimum 15 required)
+              <p v-if="derivedScore < 15" style="color: #dc3545; font-weight: bold;">
+                ⚠️ You need a minimum score of 15 points to proceed!
               </p>
               <p v-if="derivedScore >= 15" style="color: #4CAF50; font-weight: bold;">
                 ✅ Great! You've reached the minimum required score of 15!
@@ -1149,7 +1149,7 @@ export default {
       showPreTestResult: false,
       score: 0,
       userAnswers: [],
-      hasTakenPreTestInSession: false, // New flag to track pre-test completion in session
+      hasTakenPreTestInSession: false,
       preTestQuestions: [
         { question: "What is a tautology?", options: ["A statement that is always false", "A statement that is always true", "A statement that depends on the situation", "A statement with no meaning"], answer: "A statement that is always true", explanation: "A tautology is a statement that is always true. p ∨ ¬p (law of excluded middle) is always true." },
         { question: "Which type of statement represents 'if-then'?", options: ["Conjunction", "Disjunction", "Conditional", "Equivalence"], answer: "Conditional", explanation: "The conditional statement is represented by 'if p, then q' or p → q." },
@@ -1482,7 +1482,7 @@ export default {
         return array.sort(() => Math.random() - 0.5);
       },
       
-      // ✅ NEW: Check sessionStorage for pre-test completion
+      // ✅ Check sessionStorage for pre-test completion
       checkPreTestSessionStatus() {
         const hasTakenPreTest = sessionStorage.getItem('lesson3_preTest_completed');
         if (hasTakenPreTest === 'true') {
@@ -1490,28 +1490,32 @@ export default {
         }
       },
       
-      // ✅ UPDATED: Save Pre-Test Score to localStorage for ProgressPage AND sessionStorage
+      // ✅ UPDATED: Auto-save Pre-Test Score to localStorage
       submitPreTest() {
         this.score = this.preTestQuestions.reduce((acc, q, i) => acc + (this.userAnswers[i] === q.answer ? 1 : 0), 0);
         this.showPreTestResult = true;
         
-        // Load existing assessment scores from localStorage
-        let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
-        // Save/update pre-test score (key: 'preTest-lesson3' for specificity; value: raw score as string)
-        existingAssessments['preTest-lesson3'] = this.score.toString();
-        localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
+        // Auto-save to localStorage
+        this.saveScoreToLocalStorage('preTest-lesson3', this.score);
       },
       
-      // ✅ NEW: Complete pre-test and mark as taken in session
+      // ✅ Helper method to save scores
+      saveScoreToLocalStorage(key, score) {
+        let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
+        existingAssessments[key] = score.toString();
+        localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
+        console.log(`Score saved: ${key} = ${score}`);
+      },
+      
+      // ✅ Complete pre-test and mark as taken in session
       completePreTest() {
-        // Mark pre-test as completed in sessionStorage
         sessionStorage.setItem('lesson3_preTest_completed', 'true');
         this.hasTakenPreTestInSession = true;
         this.preTestCompleted = true;
         this.showPreTestResult = false;
       },
       
-      // ✅ NEW: Proceed directly to lesson if pre-test already taken
+      // ✅ Proceed directly to lesson if pre-test already taken
       proceedToLesson() {
         this.preTestCompleted = true;
       },
@@ -1580,6 +1584,8 @@ export default {
             this.truthChecked[index] = 2;
           }
         }
+        // ✅ Auto-save score after each check
+        this.saveScoreToLocalStorage('truthMastery-lesson3', this.truthScore);
       },
       prevTruthQuiz() {
         if (this.currentTruthQuizIndex > 0) {
@@ -1591,28 +1597,22 @@ export default {
           this.currentTruthQuizIndex++;
         }
       },
-      // ✅ UPDATED: Save Truth Mastery Score on back to lesson
+      // ✅ UPDATED: Auto-save all scores when going back to lesson
       backToMainLesson() {
-        // Load existing assessment scores from localStorage
-        let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
-        
-        // Save truth mastery score if applicable
+        // Save all scores automatically
         if (this.showTruthMastery) {
-          existingAssessments['truthMastery-lesson3'] = this.truthScore.toString();
+          this.saveScoreToLocalStorage('truthMastery-lesson3', this.truthScore);
         }
         
-        // Save law mastery score if applicable
         if (this.showLawMastery) {
-          existingAssessments['lawMastery-lesson3'] = this.lawScore.toString();
+          this.saveScoreToLocalStorage('lawMastery-lesson3', this.lawScore);
         }
         
-        // Save derived mastery score if applicable
         if (this.showDerivedMastery) {
-          existingAssessments['derivedMastery-lesson3'] = this.derivedScore.toString();
+          this.saveScoreToLocalStorage('derivedMastery-lesson3', this.derivedScore);
         }
         
-        localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
-        
+        // Reset UI states
         this.showTruthMastery = false;
         this.showImplication = false;
         this.showLawMastery = false;
@@ -1620,6 +1620,7 @@ export default {
         this.masteryAnswers = [];
         this.masteryFeedbacks = [];
         this.selectedTopic = null;
+        
         // Reset carousel indices
         this.currentLawQuizIndex = 0;
         this.currentTruthQuizIndex = 0;
@@ -1664,6 +1665,8 @@ export default {
             this.lawChecked[index] = 2;
           }
         }
+        // ✅ Auto-save score after each check
+        this.saveScoreToLocalStorage('lawMastery-lesson3', this.lawScore);
       },
       prevLawQuiz() {
         if (this.currentLawQuizIndex > 0) {
@@ -1675,7 +1678,6 @@ export default {
           this.currentLawQuizIndex++;
         }
       },
-      // ✅ UPDATED: Save Law Mastery Score on back to lesson (integrate into backToMainLesson)
       goToDerivedMasteryQuiz() {
         this.showDerivedMastery = true;
         this.derivedQuizzes = this.shuffleArray([...this.derivedQuizzes]);
@@ -1770,6 +1772,8 @@ export default {
             this.derivedChecked[index] = 2;
           }
         }
+        // ✅ Auto-save score after each check
+        this.saveScoreToLocalStorage('derivedMastery-lesson3', this.derivedScore);
       },
       prevDerivedQuiz() {
         if (this.currentDerivedQuizIndex > 0) {

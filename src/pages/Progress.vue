@@ -227,11 +227,11 @@
           </q-card>
         </div>
 
-        <!-- Slide 8: Other Assessments -->
+        <!-- Slide 8: Assessments -->
         <div class="carousel-slide">
           <q-card class="score-card">
             <q-card-section>
-              <h3 class="section-title">Other Assessments</h3>
+              <h3 class="section-title">Assessments</h3>
               
               <!-- Progress Section moved to top -->
               <div class="progress-section top-progress">
@@ -307,9 +307,10 @@ export default defineComponent({
       'derivedMastery-lesson3': { label: 'Derived Connectives Mastery', max: 20, percentage: (score) => Math.round((score / 20) * 100) }
     }
 
-    // Set Theory assessments
+    // ✅ UPDATED Set Theory assessments (preTest-setTheory added)
     const setTheoryMap = {
-      'setPreTest': { label: 'Set Theory Pre-Test', max: 10, percentage: (score) => Math.round((score / 10) * 100) },
+      'preTest-setTheory': { label: 'Set Theory Pre-Test', max: 10, percentage: (score) => Math.round((score / 10) * 100) },
+      
       'setCardinality': { label: 'Set Cardinality & Representation', max: 10, percentage: (score) => Math.round((score / 10) * 100) },
       'singletonFiniteEmpty': { label: 'Singleton, Finite & Empty Set', max: 10, percentage: (score) => Math.round((score / 10) * 100) },
       'infiniteEqualUnequal': { label: 'Infinite Equal & Unequal Set', max: 10, percentage: (score) => Math.round((score / 10) * 100) },
@@ -346,7 +347,7 @@ export default defineComponent({
 
     // Matrices assessments
     const matricesMap = {
-      'matricesPreTest': { label: 'Matrices Pre-Test', max: 10, percentage: (score) => Math.round((score / 10) * 100) },
+      'matricesPreTest': { label: 'Matrices Pre-Test', max: 5, percentage: (score) => Math.round((score / 10) * 100) },
       'matricesMastery': { label: 'Matrices Mastery Quiz', max: 10, percentage: (score) => Math.round((score / 10) * 100) }
     }
 
@@ -354,6 +355,7 @@ export default defineComponent({
     const propositionalLogicAssessments = computed(() => {
       return Object.keys(assessmentMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = assessmentMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -375,6 +377,7 @@ export default defineComponent({
     const setTheoryAssessments = computed(() => {
       return Object.keys(setTheoryMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = setTheoryMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -396,6 +399,7 @@ export default defineComponent({
     const operationsSetsAssessments = computed(() => {
       return Object.keys(operationsSetsMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = operationsSetsMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -417,6 +421,7 @@ export default defineComponent({
     const relationsFunctionsAssessments = computed(() => {
       return Object.keys(relationsFunctionsMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = relationsFunctionsMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -438,6 +443,7 @@ export default defineComponent({
     const algorithmAssessments = computed(() => {
       return Object.keys(algorithmMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = algorithmMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -459,6 +465,7 @@ export default defineComponent({
     const graphTheoryAssessments = computed(() => {
       return Object.keys(graphTheoryMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = graphTheoryMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -480,6 +487,7 @@ export default defineComponent({
     const matricesAssessments = computed(() => {
       return Object.keys(matricesMap).reduce((acc, key) => {
         const stored = assessmentScores.value[key]
+        // MODIFIED: Always treat stored value as actual score, not percentage
         const score = stored && stored.score ? stored.score : (parseInt(assessmentScores.value[key]) || 0)
         const entry = matricesMap[key]
         if (entry) acc[key] = { label: entry.label, score, max: entry.max, percentage: entry.percentage(score) }
@@ -503,12 +511,32 @@ export default defineComponent({
         if (!assessmentMap[key] && !setTheoryMap[key] && !operationsSetsMap[key] && !relationsFunctionsMap[key] && !algorithmMap[key] && !graphTheoryMap[key] && !matricesMap[key]) {
           let score;
           let percentage = null;
-          if (typeof stored === 'object' && stored !== null && stored.score !== undefined) {
-            score = stored.score;
-            percentage = stored.percentage || null;
+          // MODIFIED: For other assessments, check if it's a percentage or score
+          if (typeof stored === 'object' && stored !== null) {
+            if (stored.score !== undefined) {
+              score = stored.score;
+              // If score is 10, show as 10 (not as percentage)
+              if (score <= 10) {
+                // Likely an actual score out of 10
+                percentage = Math.round((score / 10) * 100);
+              } else {
+                percentage = null;
+              }
+            } else if (stored.percentage !== undefined) {
+              score = stored.percentage;
+              percentage = stored.percentage;
+            }
           } else {
-            score = parseInt(stored) || 0;
-            percentage = score;
+            const parsedScore = parseInt(stored) || 0;
+            score = parsedScore;
+            // If stored value is 10 or less, treat as actual score out of 10
+            if (parsedScore <= 10) {
+              percentage = Math.round((parsedScore / 10) * 100);
+            } else if (parsedScore <= 100) {
+              percentage = parsedScore;
+            } else {
+              percentage = null;
+            }
           }
           acc[key] = { label: `Assessment ${key}`, score, percentage }
         }
@@ -572,7 +600,11 @@ export default defineComponent({
     const handleAssessmentComplete = (event) => {
       if (event.detail && event.detail.assessmentId && event.detail.score !== undefined) {
         const { assessmentId, score } = event.detail
-        assessmentScores.value[assessmentId] = { score, timestamp: new Date().toISOString() }
+        // MODIFIED: Always store as actual score, not percentage
+        assessmentScores.value[assessmentId] = { 
+          score: score, 
+          timestamp: new Date().toISOString() 
+        }
       }
     }
 
@@ -617,6 +649,7 @@ export default defineComponent({
       if (savedGraph) {
         try {
           const progress = JSON.parse(savedGraph)
+          // MODIFIED: Store as actual scores, not percentages
           assessmentScores.value['graphPreTest'] = { score: progress.preTestScore || 0 }
           assessmentScores.value['graphAlgorithmId'] = { score: progress.identificationScore || progress.lawScore || 0 }
           assessmentScores.value['graphSimpleAlgo'] = { score: progress.simpleAlgoScore || progress.derivedScore || 0 }
@@ -632,6 +665,7 @@ export default defineComponent({
       if (savedAlgorithm) {
         try {
           const progress = JSON.parse(savedAlgorithm)
+          // MODIFIED: Store as actual scores, not percentages
           assessmentScores.value['algorithmPreTest'] = { score: progress.preTestScore || 0 }
           assessmentScores.value['algorithmIdentificationQuiz'] = { score: progress.identificationQuizScore || progress.lawScore || 0 }
           assessmentScores.value['simpleAlgorithmMastery'] = { score: progress.simpleAlgorithmMasteryScore || progress.derivedScore || 0 }
@@ -993,11 +1027,13 @@ export default defineComponent({
   transform: scale(1.3);
 }
 
-/* Reset Button */
+/* Reset Button - Centered */
 .reset-section {
   text-align: center;
   padding-bottom: 10px;
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
 
 .reset-btn {
@@ -1177,9 +1213,13 @@ export default defineComponent({
   }
   
   .reset-btn {
-    padding: 6px 16px;
-    font-size: 12px;
-    max-width: 200px;
+    padding: 5px 10px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 8px;
+    letter-spacing: 0.4px;
+    max-width: 260px;
+    box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
   }
 }
 

@@ -148,17 +148,97 @@ const truthTableData = [
   { p: 'F', q: 'F' }
 ];
 
+// Function Assessment Questions
+const functionEasyQuestions = [
+  { 
+    type: 'multiple-choice', 
+    text: 'What do you call a relation such that no two ordered pairs have the same first element?', 
+    options: ['a. Ordered pair', 'b. Function', 'c. Notation', 'd. Binary operations'], 
+    correctAnswer: 'b. Function', 
+    explanation: 'A function is a relation where each input (first element) maps to exactly one output (second element), ensuring no two ordered pairs share the same first element.' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'What type of test can be used to check whether an equation is a function using graphs?', 
+    options: ['a. Diagonal line test', 'b. Horizontal line test', 'c. Vertical line test', 'd. Both A and B'], 
+    correctAnswer: 'c. Vertical line test', 
+    explanation: 'The vertical line test is used to determine if a graph represents a function. If any vertical line intersects the graph at more than one point, it is not a function.' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'The set of values of x.', 
+    options: ['a. Domain', 'b. Range', 'c. Ordinate', 'd. Origin'], 
+    correctAnswer: 'a. Domain', 
+    explanation: 'The domain is the set of all possible input values (x-values) for the function.' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'Which of the following is a function?', 
+    options: ['a. A parabola facing right', 'b. A parabola facing left', 'c. A parabola facing upward', 'd. A circle'], 
+    correctAnswer: 'c. A parabola facing upward', 
+    explanation: 'A parabola facing upward (y = x²) passes the vertical line test, unlike a circle or side-facing parabolas which fail it.' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'Which of the following is a characteristic of a bijective function?', 
+    options: [
+      'a. The function is both injective (one-to-one) and surjective (onto).', 
+      'b. The function is only surjective.', 
+      'c. The function is only injective.', 
+      'd. The function has at least one element in the domain that maps to multiple elements in the range.'
+    ], 
+    correctAnswer: 'a. The function is both injective (one-to-one) and surjective (onto).', 
+    explanation: 'A bijective function is both one-to-one (injective) and onto (surjective), meaning each element in the domain maps to a unique element in the range, and all elements in the range are mapped.' 
+  }
+];
+
+const functionHardQuestions = [
+  { 
+    type: 'multiple-choice', 
+    text: 'Which of the following is not a function?', 
+    options: ['a. x + y = 6', 'b. x² + y = 15', 'c. x³ + 2y = 5', 'd. x + 3y² = 4'], 
+    correctAnswer: 'd. x + 3y² = 4', 
+    explanation: 'x + 3y² = 4 leads to two possible y values for some x (e.g., when x=1, y²=1 so y=±1), failing the vertical line test.' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'Which of the following set is a function?', 
+    options: [
+      'a. A = {(2,3), (4,2), (1,5)}', 
+      'b. B = { (2,3), (3,2), (3,1)}', 
+      'c. C = {(1,1), (1,5),(1,6)}', 
+      'd. D = {(0,3), (0,4), (0,5)}'
+    ], 
+    correctAnswer: 'a. A = {(2,3), (4,2), (1,5)}', 
+    explanation: 'Set A has unique first elements (2,4,1), while others have duplicates: B has two 3s, C and D have multiple for 1 and 0 respectively.' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'How many values of y does a function have?', 
+    options: ['a. 3', 'b. 2', 'c. 0', 'd. 1'], 
+    correctAnswer: 'd. 1', 
+    explanation: 'By definition, a function assigns exactly one output (y-value) to each input (x-value).' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'Which of the following is a function?', 
+    options: ['a. y = x²', 'b. x² + y² = 1', 'c. y² = x + 2', 'd. x + y² = 3'], 
+    correctAnswer: 'a. y = x²', 
+    explanation: 'y = x² solves for y explicitly as a function of x; the others fail the vertical line test (e.g., circles and sideways parabolas).' 
+  },
+  { 
+    type: 'multiple-choice', 
+    text: 'Which of the following relations is a function?', 
+    options: ['a. y² = 4x', 'b. x = y² − 1', 'c. y = 3x − 2', 'd. x² + y² = 9'], 
+    correctAnswer: 'c. y = 3x − 2', 
+    explanation: 'y = 3x − 2 is a linear function with one y-value for each x-value. The others represent relations that fail the vertical line test.' 
+  }
+];
+
+// Original fullFunctionQuestions kept for compatibility (not used for assessment 1 anymore)
 const fullFunctionQuestions = [
-  { type: 'multiple-choice', text: 'What do you call a relation such that no two ordered pairs have the same first element?', options: ['a. Ordered pair', 'b. Function', 'c. Notation', 'd. Binary operations'], correctAnswer: 'b. Function', explanation: 'A function is a relation where each input (first element) maps to exactly one output (second element), ensuring no two ordered pairs share the same first element.' },
-  { type: 'multiple-choice', text: 'Which of the following set is a function?', options: ['a. A = {(2,3), (4,2), (1,5)}', 'b. B = { (2,3), (3,2), (3,1)}', 'c. C = {(1,1), (1,5),(1,6)}', 'd. D = {(0,3), (0,4), (0,5)}'], correctAnswer: 'a. A = {(2,3), (4,2), (1,5)}', explanation: 'Set A has unique first elements (2,4,1), while others have duplicates: B has two 3s, C and D have multiple for 1 and 0 respectively.' },
-  { type: 'multiple-choice', text: 'The set of values of x.', options: ['a. Domain', 'b. Range', 'c. Ordinate', 'd. Origin'], correctAnswer: 'a. Domain', explanation: 'The domain is the set of all possible input values (x-values) for the function.' },
-  { type: 'multiple-choice', text: 'Which of the following is a function?', options: ['a. A parabola facing right', 'b. A parabola facing left', 'c. A parabola facing upward', 'd. A circle'], correctAnswer: 'c. A parabola facing upward', explanation: 'A parabola facing upward (y = x²) passes the vertical line test, unlike a circle or side-facing parabolas which fail it.' },
-  { type: 'multiple-choice', text: 'Which statement best describes a function that covers all values in the range?', options: ['a. Each input has only one output', 'b. Every output has at least one input', 'c. Some outputs share multiple inputs', 'd. Some outputs have no input'], correctAnswer: 'b. Every output has at least one input', explanation: 'A surjective (onto) function means every element in the range is mapped to by at least one input.' },
-  { type: 'multiple-choice', text: 'How many values of y does a function have?', options: ['a. 3', 'b. 2', 'c. 0', 'd. 1'], correctAnswer: 'd. 1', explanation: 'By definition, a function assigns exactly one output (y-value) to each input (x-value).' },
-  { type: 'multiple-choice', text: 'Which of the following is a function?', options: ['a. y = x²', 'b. x² + y = 15', 'c. y² = x + 2', 'd. x + y² = 3'], correctAnswer: 'a. y = x²', explanation: 'y = x² solves for y explicitly as a function of x; the others fail the vertical line test.' },
-  { type: 'multiple-choice', text: 'What is the inverse of the function f(x) = 2x + 3?', options: ['a. f⁻¹(x) = (x − 3)/2', 'b. f⁻¹(x) = 2x − 3', 'c. f⁻¹(x) = (x + 3)/2', 'd. f⁻¹(x) = 3x − 2'], correctAnswer: 'a. f⁻¹(x) = (x − 3)/2', explanation: 'To find the inverse, swap x and y: y = 2x + 3 → x = 2y + 3 → 2y = x - 3 → y = (x - 3)/2.' },
-  { type: 'multiple-choice', text: 'Which of the following is not a function?', options: ['a. x + y = 6', 'b. x² + y = 15', 'c. x³ + 2y = 5', 'd. x + 3y² = 4'], correctAnswer: 'd. x + 3y² = 4', explanation: 'x + 3y² = 4 leads to two possible y values for some x, failing the vertical line test.' },
-  { type: 'multiple-choice', text: 'Which statement best describes a function where each input goes to a unique output?', options: ['a. Some outputs may be shared by multiple inputs', 'b. Every input is paired with only one output', 'c. Some inputs go to multiple outputs', 'd. Each output must come from multiple inputs'], correctAnswer: 'b. Every input is paired with only one output', explanation: 'That is the fundamental definition of a function.' }
+  ...functionEasyQuestions,
+  ...functionHardQuestions
 ];
 
 const fullTruthQuestions = [
@@ -232,7 +312,7 @@ const fullSetsQuestions = [
 ];
 
 const assessments = [
-  { id: 1, title: 'Function', color: 'teal', questions: fullFunctionQuestions },
+  { id: 1, title: 'Function', color: 'teal', questions: functionEasyQuestions }, // Initial questions set to Easy mode
   { id: 2, title: 'Truth Tables', color: 'teal', questions: fullTruthQuestions },
   { id: 3, title: 'Operation on sets', color: 'teal', questions: fullSetsQuestions },
   { id: 4, title: 'Propositional Logic', color: 'teal', questions: fullPropositionalQuestions },
@@ -369,12 +449,11 @@ export default defineComponent({
       difficulty.value = diff;
       if (selectedAssessment.value.id === 1) { // Function assessment
         if (diff === 'Easy') {
-          // For Easy mode: Take 5 random questions from the fullFunctionQuestions
-          const shuffled = shuffleArray([...fullFunctionQuestions]);
-          selectedAssessment.value.questions = shuffled.slice(0, 5);
+          // For Easy mode: Use the easy questions
+          selectedAssessment.value.questions = functionEasyQuestions;
         } else {
-          // For Hard mode: Take the remaining 5 questions (not randomized)
-          selectedAssessment.value.questions = fullFunctionQuestions.slice(5);
+          // For Hard mode: Use the hard questions
+          selectedAssessment.value.questions = functionHardQuestions;
         }
       } else if (selectedAssessment.value.id === 2) { // Truth Tables assessment
         if (diff === 'Easy') {
@@ -383,7 +462,7 @@ export default defineComponent({
           const shuffled = shuffleArray([...multipleChoiceQuestions]);
           selectedAssessment.value.questions = shuffled.slice(0, 5);
         } else {
-          // For Hard mode: Take all truth-table questions (not randomized)
+          // For Hard mode: Take all truth-table questions
           selectedAssessment.value.questions = fullTruthQuestions.filter(q => q.type === 'truth-table');
         }
       } else if (selectedAssessment.value.id === 3) { // Operation on sets assessment
@@ -392,7 +471,7 @@ export default defineComponent({
           const shuffled = shuffleArray([...fullSetsQuestions]);
           selectedAssessment.value.questions = shuffled.slice(0, 6);
         } else {
-          // For Hard mode: Take the remaining questions (not randomized)
+          // For Hard mode: Take the remaining questions
           selectedAssessment.value.questions = fullSetsQuestions.slice(6);
         }
       } else if (selectedAssessment.value.id === 4) { // Propositional Logic assessment
@@ -402,7 +481,7 @@ export default defineComponent({
           const shuffled = shuffleArray([...easyQuestions]);
           selectedAssessment.value.questions = shuffled.slice(0, 7);
         } else {
-          // For Hard mode: Take truth-table and remaining questions (not randomized)
+          // For Hard mode: Take truth-table and remaining questions
           selectedAssessment.value.questions = fullPropositionalQuestions.slice(7);
         }
       } else if (selectedAssessment.value.id === 5) { // Algorithm assessment
@@ -411,7 +490,7 @@ export default defineComponent({
           const shuffled = shuffleArray([...fullAlgorithmQuestions]);
           selectedAssessment.value.questions = shuffled.slice(0, 5);
         } else {
-          // For Hard mode: Take the remaining 5 questions (not randomized)
+          // For Hard mode: Take the remaining 5 questions
           selectedAssessment.value.questions = fullAlgorithmQuestions.slice(5);
         }
       } else if (selectedAssessment.value.id === 6) { // Graph assessment
@@ -420,7 +499,7 @@ export default defineComponent({
           const shuffled = shuffleArray([...fullGraphQuestions]);
           selectedAssessment.value.questions = shuffled.slice(0, 5);
         } else {
-          // For Hard mode: Take the remaining 5 questions (not randomized)
+          // For Hard mode: Take the remaining 5 questions
           selectedAssessment.value.questions = fullGraphQuestions.slice(5);
         }
       }
@@ -434,7 +513,7 @@ export default defineComponent({
       
       difficulty.value = 'Hard';
       if (selectedAssessment.value.id === 1) {
-        selectedAssessment.value.questions = fullFunctionQuestions.slice(5);
+        selectedAssessment.value.questions = functionHardQuestions;
       } else if (selectedAssessment.value.id === 2) {
         selectedAssessment.value.questions = fullTruthQuestions.filter(q => q.type === 'truth-table');
       } else if (selectedAssessment.value.id === 3) {
@@ -455,7 +534,7 @@ export default defineComponent({
     
     const backToEasyMode = () => {
       difficulty.value = 'Easy';
-      // Reset to random Easy mode questions
+      // Reset to Easy mode questions
       selectDifficulty('Easy');
       // Reset the quiz state
       currentQuestion.value = 0;

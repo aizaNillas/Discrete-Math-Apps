@@ -946,16 +946,20 @@ export default {
       }
     },
     
-    // ✅ NEW: Save Pre-Test Score to localStorage for ProgressPage AND sessionStorage
+    // ✅ MODIFIED: Now also saves to assessmentScores like previous lessons
     submitPreTest() {
       this.score = this.preTestQuestions.reduce((acc, q, i) => acc + (this.userAnswers[i] === q.answer ? 1 : 0), 0);
       this.showPreTestResult = true;
       
-      // Load existing assessment scores from localStorage
+      // ────────────────────────────────────────────────
+      // Save to assessmentScores (for Progress.vue compatibility)
       let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
-      // Save/update pre-test score (key: 'preTest-graphTheory' for specificity; value: raw score as string)
       existingAssessments['preTest-graphTheory'] = this.score.toString();
       localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
+      // ────────────────────────────────────────────────
+      
+      // Also keep your own graphTheoryProgress record (unchanged)
+      this.saveProgress();
     },
     
     // ✅ NEW: Complete pre-test and mark as taken in session
@@ -972,7 +976,7 @@ export default {
       this.preTestCompleted = true;
     },
     
-    // ✅ Progress Recording Methods
+    // ✅ Progress Recording Methods (unchanged)
     saveProgress() {
       const progress = {
         preTestScore: this.score,
@@ -999,7 +1003,8 @@ export default {
         if (this.searchScore === 0 && progress.searchScore !== undefined) this.searchScore = progress.searchScore;
       }
     },
-    // ✅ LAW MASTERY QUIZ - CAROUSEL METHODS
+    
+    // LAW MASTERY QUIZ - CAROUSEL METHODS (unchanged)
     checkLaw(index) {
       const userAnswer = this.lawAnswers[index].trim();
       if (!userAnswer) {
@@ -1037,7 +1042,8 @@ export default {
         this.currentLawQuizIndex++;
       }
     },
-    // ✅ DERIVED MASTERY QUIZ - CAROUSEL METHODS
+    
+    // DERIVED MASTERY QUIZ - CAROUSEL METHODS (unchanged)
     checkDerived(index) {
       const userAnswer = this.derivedAnswers[index].trim();
       if (!userAnswer) {
@@ -1084,7 +1090,8 @@ export default {
         this.currentDerivedQuizIndex++;
       }
     },
-    // ✅ SEARCH MASTERY QUIZ - CAROUSEL METHODS
+    
+    // SEARCH MASTERY QUIZ - CAROUSEL METHODS (unchanged)
     checkSearch(index) {
       const userAnswer = this.searchAnswers[index].trim();
       if (!userAnswer) {
@@ -1124,7 +1131,8 @@ export default {
         this.currentSearchQuizIndex++;
       }
     },
-    // ✅ Enhanced scrollToTop Method
+
+    // The rest of your methods remain completely unchanged
     scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       const container = document.querySelector('.lesson-container');
@@ -1164,7 +1172,6 @@ export default {
     formatContent(content) {
       return content.replace(/\n/g, "<br>");
     },
-    // Interactive Demo Methods
     runLinearSearchDemo() {
       const arrayStr = this.demoArrayInput.trim();
       if (!arrayStr || !this.demoTarget) {
@@ -1202,18 +1209,12 @@ export default {
       this.demoFound = false;
       this.demoFoundIndex = -1;
     },
-    // ✅ UPDATED: Save Mastery Scores on back to lesson
     backToMainLesson() {
-      // Load existing assessment scores from localStorage
       let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
-      
-      // Save graph mastery score
       if (this.showLawMastery) {
         existingAssessments['graphMastery'] = this.lawScore.toString();
       }
-      
       localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
-      
       this.showLawMastery = false;
       this.lawAnswers = [];
       this.lawFeedbacks = [];
@@ -1246,11 +1247,9 @@ export default {
       this.scrollToTop();
     },
     backToDerivedMastery() {
-      // Save derived mastery score
       let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
       existingAssessments['typesGraphMastery'] = this.derivedScore.toString();
       localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
-      
       this.showDerivedMastery = false;
       this.selectedTopic = null;
       this.currentDerivedQuizIndex = 0;
@@ -1269,11 +1268,9 @@ export default {
       this.scrollToTop();
     },
     backToSearchMastery() {
-      // Save special graph types mastery score
       let existingAssessments = JSON.parse(localStorage.getItem('assessmentScores') || '{}');
       existingAssessments['specialGraphMastery'] = this.searchScore.toString();
       localStorage.setItem('assessmentScores', JSON.stringify(existingAssessments));
-      
       this.showSearchMastery = false;
       this.selectedTopic = null;
       this.currentSearchQuizIndex = 0;
